@@ -589,12 +589,13 @@ header.main-header .header-sticky.active{
 }
 
 .main-menu ul li a{
-	font-family: var(--accent-font);
-	font-size: 16px;
+	font-family: 'itgraflo';
+	font-size: 28px;
 	font-weight: 600;
 	line-height: 1.4em;
+  	letter-spacing: 1.5px;
 	padding: 14px 18px !important;
-	color: var(--text-color);
+	color: #122658;
 	text-transform: capitalize;
 	transition: all 0.3s ease-in-out;
 }
