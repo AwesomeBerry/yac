@@ -593,7 +593,7 @@ header.main-header .header-sticky.active{
 	font-size: 28px;
 	font-weight: 600;
 	line-height: 1.4em;
-  	letter-spacing: 1.5px;
+  	letter-spacing: 1px;
 	padding: 14px 18px !important;
 	color: #122658;
 	text-transform: capitalize;
@@ -1167,8 +1167,11 @@ header.main-header .header-sticky.active{
 }
 
 .campaign-content-info h3{
-	font-size: 20px;
-	margin-bottom: 20px;
+
+	font-family: 'itgraflo',var(--accent-font);
+  	letter-spacing: 1.4px;
+	font-size: 24px;
+	margin-bottom: 15px;
 	transition: all 0.4s ease-in-out;
 }  
 
