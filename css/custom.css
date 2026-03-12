@@ -2778,6 +2778,13 @@ header.main-header .header-sticky.active{
     margin-bottom: 0;
 }
 
+
+.accordion-body a {
+	font-family: "Manrope", sans-serif;
+	color: #F26B0F;
+	text-transform: none;
+}
+
 /************************************/
 /***     17. Services Page css    ***/
 /************************************/
