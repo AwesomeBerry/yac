@@ -1183,6 +1183,7 @@ header.main-header .header-sticky.active{
 
 .campaign-item.active .campaign-content-info h3,
 .campaign-item:hover .campaign-content-info h3,
+.campaign-item:hover .campaign-content-info h6,
 .campaign-item.active .campaign-content-info p,
 .campaign-item:hover .campaign-content-info p,
 .campaign-item.active .campaign-readmore-btn .readmore-btn,
