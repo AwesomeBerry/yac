@@ -44,7 +44,7 @@
 /************************************/	
 
 :root{
-	--primary-color			: #032642;
+	--primary-color			: #021708;
 	--secondary-color		: #FEF2F2;
 	--text-color			: #495762;
 	--accent-color			: #F26B0F;
@@ -1098,7 +1098,7 @@ header.main-header .header-sticky.active{
 	left: 0;
 	right: 0;
 	bottom: 0;
-	background: #0b152e;
+	background: #021708;
 	width: 100%;
 	height: 100%;
 	transition: all 0.4s ease-in-out;
@@ -1468,7 +1468,7 @@ header.main-header .header-sticky.active{
 /************************************/
 
 .our-gallery{
-	background: #122658;
+	background: #21322e;
 	padding: 100px 0 70px;
 }
 
@@ -1547,7 +1547,7 @@ header.main-header .header-sticky.active{
 /************************************/
 
 .our-testimonial{
-	background: url(../images/testimonial-bg-image.png), var(--primary-color);
+	background: url(../images/testimonial-bg-image.jpg), var(--primary-color);
 	background-repeat: no-repeat;
 	background-size: cover;
 	background-position: center center;
