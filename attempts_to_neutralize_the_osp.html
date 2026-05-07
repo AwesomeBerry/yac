@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tracker: Attempts to Neutralize the OSP</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;900&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;1,400&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+  <style>
+    :root {
+      --osp-gold: #806d28;
+      --osp-gold-dark: #5e4f1c;
+      --osp-gold-light: #b09840;
+      --osp-gold-pale: #f5efdb;
+      --osp-gold-softer: #ede0b0;
+      --osp-cream: #fdf8ef;
+      --osp-white: #ffffff;
+      --osp-text: #2a2014;
+      --osp-muted: #7a6a3e;
+      --osp-border: #d6c48a;
+      --status-ongoing: #1a6b2f;
+      --status-ongoing-bg: #e8f5ec;
+      --status-dismissed: #8b2020;
+      --status-dismissed-bg: #fbeaea;
+      --status-withdrawn: #4a5a8c;
+      --status-withdrawn-bg: #eaedfa;
+      --status-struck: #7a3e00;
+      --status-struck-bg: #fdf0e0;
+      --status-upheld: #2a5e8c;
+      --status-upheld-bg: #e5f0fb;
+      --status-unknown: #5a5a5a;
+      --status-unknown-bg: #f0f0f0;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      font-family: 'Source Sans 3', sans-serif;
+      background-color: var(--osp-cream);
+      color: var(--osp-text);
+      min-height: 100vh;
+    }
+
+    /* All original styles from your attached file */
+    .app-header { background: linear-gradient(135deg, var(--osp-gold-dark) 0%, var(--osp-gold) 60%, var(--osp-gold-light) 100%); color: #fff; padding: 0; position: relative; overflow: hidden; box-shadow: 0 4px 24px rgba(128,109,40,0.35); }
+    .app-header::before { content: ''; position: absolute; top: -60px; right: -80px; width: 320px; height: 320px; background: rgba(255,255,255,0.06); border-radius: 50%; }
+    .app-header::after { content: ''; position: absolute; bottom: -100px; left: -60px; width: 260px; height: 260px; background: rgba(255,255,255,0.04); border-radius: 50%; }
+    .header-inner { position: relative; z-index: 1; padding: 2rem 1.5rem 1.5rem; }
+    .header-badge { display: inline-block; background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.35); border-radius: 50px; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.25rem 0.85rem; margin-bottom: 0.75rem; color: #fffbe8; }
+    .header-title { font-family: 'Playfair Display', serif; font-size: clamp(1.4rem, 4vw, 2.4rem); font-weight: 900; line-height: 1.15; margin-bottom: 0.4rem; letter-spacing: -0.01em; }
+    .header-subtitle { font-size: clamp(0.8rem, 2vw, 0.95rem); opacity: 0.85; font-weight: 300; letter-spacing: 0.02em; }
+    .header-meta { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1.2rem; }
+    .stat-chip { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); border-radius: 8px; padding: 0.5rem 1rem; text-align: center; min-width: 90px; transition: background 0.2s; }
+    .stat-chip:hover { background: rgba(255,255,255,0.25); }
+    .stat-chip .num { display: block; font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700; line-height: 1; }
+    .stat-chip .lbl { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.8; }
+
+    .controls-panel { background: var(--osp-white); border-bottom: 2px solid var(--osp-border); padding: 1rem 1.5rem; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 12px rgba(128,109,40,0.1); }
+    .controls-row { display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; }
+    .search-wrapper { position: relative; flex: 1 1 220px; }
+    .search-wrapper i { position: absolute; left: 0.85rem; top: 50%; transform: translateY(-50%); color: var(--osp-gold); font-size: 0.85rem; }
+    .search-input { width: 100%; padding: 0.55rem 0.85rem 0.55rem 2.2rem; border: 1.5px solid var(--osp-border); border-radius: 8px; font-family: 'Source Sans 3', sans-serif; font-size: 0.88rem; background: var(--osp-cream); color: var(--osp-text); transition: border-color 0.2s, box-shadow 0.2s; }
+    .search-input:focus { outline: none; border-color: var(--osp-gold); box-shadow: 0 0 0 3px rgba(128,109,40,0.12); }
+    .filter-select { padding: 0.55rem 2rem 0.55rem 0.85rem; border: 1.5px solid var(--osp-border); border-radius: 8px; font-family: 'Source Sans 3', sans-serif; font-size: 0.85rem; background: var(--osp-cream); color: var(--osp-text); appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23806d28' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.7rem center; cursor: pointer; transition: border-color 0.2s; flex: 1 1 140px; max-width: 180px; }
+    .filter-select:focus { outline: none; border-color: var(--osp-gold); box-shadow: 0 0 0 3px rgba(128,109,40,0.12); }
+    .sort-btn { display: flex; align-items: center; gap: 0.4rem; padding: 0.55rem 1rem; border: 1.5px solid var(--osp-border); border-radius: 8px; background: var(--osp-cream); color: var(--osp-gold-dark); font-family: 'Source Sans 3', sans-serif; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+    .sort-btn:hover, .sort-btn.active { background: var(--osp-gold); border-color: var(--osp-gold); color: #fff; }
+    .results-count { font-size: 0.8rem; color: var(--osp-muted); padding: 0.3rem 0; white-space: nowrap; }
+
+    .timeline-container { padding: 2rem 1.5rem; max-width: 1100px; margin: 0 auto; }
+    .timeline-item { display: flex; gap: 0; margin-bottom: 2rem; animation: fadeSlideUp 0.4s ease both; }
+    @keyframes fadeSlideUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+    .timeline-spine { display: flex; flex-direction: column; align-items: center; width: 48px; flex-shrink: 0; }
+    .spine-dot { width: 18px; height: 18px; border-radius: 50%; background: var(--osp-gold); border: 3px solid var(--osp-white); box-shadow: 0 0 0 2px var(--osp-gold); flex-shrink: 0; margin-top: 1.1rem; z-index: 1; }
+    .spine-line { flex: 1; width: 2px; background: linear-gradient(to bottom, var(--osp-gold-softer), transparent); margin-top: 4px; }
+    .tracker-card { flex: 1; background: var(--osp-white); border-radius: 14px; border: 1px solid var(--osp-border); box-shadow: 0 2px 12px rgba(128,109,40,0.07); overflow: hidden; transition: box-shadow 0.25s, transform 0.25s; cursor: pointer; }
+    .tracker-card:hover { box-shadow: 0 8px 28px rgba(128,109,40,0.16); transform: translateY(-2px); }
+    .card-header-strip { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.75rem; padding: 1rem 1.25rem 0.6rem; border-bottom: 1px solid var(--osp-gold-pale); background: linear-gradient(135deg, var(--osp-gold-pale) 0%, #fff 70%); }
+    .case-name { font-family: 'Playfair Display', serif; font-size: clamp(0.88rem, 2vw, 1rem); font-weight: 700; color: var(--osp-text); flex: 1; line-height: 1.3; }
+    .status-badge { display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 0.28rem 0.7rem; border-radius: 50px; white-space: nowrap; flex-shrink: 0; }
+    .status-badge.ongoing    { background: var(--status-ongoing-bg);  color: var(--status-ongoing); }
+    .status-badge.dismissed  { background: var(--status-dismissed-bg); color: var(--status-dismissed); }
+    .status-badge.withdrawn  { background: var(--status-withdrawn-bg); color: var(--status-withdrawn); }
+    .status-badge.struck     { background: var(--status-struck-bg);    color: var(--status-struck); }
+    .status-badge.upheld     { background: var(--status-upheld-bg);    color: var(--status-upheld); }
+    .status-badge.unknown    { background: var(--status-unknown-bg);   color: var(--status-unknown); }
+    .card-body-area { padding: 0.85rem 1.25rem; }
+    .meta-row { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; margin-bottom: 0.75rem; }
+    .meta-item { display: flex; align-items: center; gap: 0.4rem; font-size: 0.78rem; color: var(--osp-muted); }
+    .meta-item i { color: var(--osp-gold-light); width: 14px; text-align: center; }
+    .jurisdiction-tag { display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; padding: 0.22rem 0.65rem; border-radius: 4px; background: var(--osp-gold-pale); color: var(--osp-gold-dark); border: 1px solid var(--osp-gold-softer); }
+    .card-detail { border-top: 1px dashed var(--osp-border); padding: 0; max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.3s; }
+    .card-detail.open { max-height: 1000px; padding: 1rem 1.25rem; }
+    .detail-text { font-size: 0.83rem; line-height: 1.65; color: var(--osp-text); }
+    .notable-pills { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.3rem; }
+    .notable-pill { font-size: 0.7rem; padding: 0.22rem 0.65rem; border-radius: 50px; background: var(--osp-gold-pale); color: var(--osp-gold-dark); border: 1px solid var(--osp-gold-softer); font-weight: 600; }
+    .toggle-row { display: flex; justify-content: flex-end; padding: 0.4rem 1.25rem 0.75rem; }
+    .toggle-btn { font-size: 0.75rem; color: var(--osp-gold); background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.35rem; font-weight: 600; padding: 0; transition: color 0.2s; }
+    .toggle-btn:hover { color: var(--osp-gold-dark); }
+    .toggle-btn i { transition: transform 0.3s; }
+    .toggle-btn.open i { transform: rotate(180deg); }
+  </style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="app-header">
+  <div class="header-inner">
+    <div class="header-badge"><i class="fa-solid fa-scale-balanced me-1"></i>Office of the Special Prosecutor — Ghana</div>
+    <h1 class="header-title">Tracker: Attempts to Neutralize the OSP</h1>
+    <p class="header-subtitle">A comprehensive chronological record of petitions, legal suits and legislative actions against the OSP and the Special Prosecutor</p>
+    <div class="header-meta" id="headerStats"></div>
+  </div>
+</header>
+
+<!-- Controls -->
+<div class="controls-panel">
+  <div class="controls-row">
+    <div class="search-wrapper">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" class="search-input" id="searchInput" placeholder="Search by case name, petitioner, outcome…" oninput="applyFilters()" />
+    </div>
+    <select class="filter-select" id="statusFilter" onchange="applyFilters()">
+      <option value="">All Statuses</option>
+      <option value="ongoing">Ongoing</option>
+      <option value="dismissed">Dismissed</option>
+      <option value="withdrawn">Withdrawn</option>
+      <option value="struck">Struck Out</option>
+      <option value="upheld">Upheld</option>
+      <option value="unknown">Status Unknown</option>
+    </select>
+    <select class="filter-select" id="typeFilter" onchange="applyFilters()">
+      <option value="">All Types</option>
+      <option value="Supreme Court">Supreme Court</option>
+      <option value="High Court">High Court</option>
+      <option value="Executive">Executive Petition</option>
+      <option value="Parliamentary">Parliamentary</option>
+    </select>
+    <button class="sort-btn active" id="sortBtn" onclick="toggleSort()">
+      <i class="fa-solid fa-arrow-down-wide-short" id="sortIcon"></i>
+      <span id="sortLabel">Newest First</span>
+    </button>
+    <span class="results-count" id="resultsCount"></span>
+  </div>
+</div>
+
+<!-- Timeline -->
+<div class="timeline-container">
+  <div id="timelineList"></div>
+  <div class="empty-state d-none" id="emptyState">
+    <i class="fa-solid fa-folder-open"></i>
+    <h5>No cases match your filters</h5>
+    <p>Try adjusting your search or filter criteria.</p>
+  </div>
+</div>
+
+<!-- Legend -->
+<div class="legend-bar">
+  <span class="legend-item"><span class="legend-dot" style="background:var(--status-ongoing-bg);border:2px solid var(--status-ongoing)"></span>Ongoing</span>
+  <span class="legend-item"><span class="legend-dot" style="background:var(--status-dismissed-bg);border:2px solid var(--status-dismissed)"></span>Dismissed</span>
+  <span class="legend-item"><span class="legend-dot" style="background:var(--status-withdrawn-bg);border:2px solid var(--status-withdrawn)"></span>Withdrawn</span>
+  <span class="legend-item"><span class="legend-dot" style="background:var(--status-struck-bg);border:2px solid var(--status-struck)"></span>Struck Out</span>
+  <span class="legend-item"><span class="legend-dot" style="background:var(--status-upheld-bg);border:2px solid var(--status-upheld)"></span>Upheld (Against OSP)</span>
+  <span class="legend-item"><span class="legend-dot" style="background:var(--status-unknown-bg);border:2px solid var(--status-unknown)"></span>Status Unknown</span>
+  <span class="ms-auto legend-item"><i class="fa-solid fa-circle-info" style="color:var(--osp-gold)"></i> Click any card to expand details</span>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// ═══════════════════ DATA ═══════════════════
+const cases = [
+  { id: 1, sortKey: 13, name: "Kenneth Kwabena Agyei Kuranchie v. Attorney-General & OSP (1st Filing)", dateFiled: "2023-09-01", dateDisplay: "September 2023", petitioner: "Kenneth K.A. Kuranchie", type: "Supreme Court", nature: "The constitutional challenge brought by Kenneth Kwabena Agyei Kuranchie against Act 959 questioned the legality of the Office of the Special Prosecutor's creation and independence. The Plaintiff argued that the Act violated provisions of the 1992 Constitution by conferring independent prosecutorial authority and police-like powers on the OSP outside the direct control of the Attorney-General, and sought to have the Office placed under the Attorney-General's authority. The matter, however, did not proceed to substantive hearing. The Plaintiff failed to file a statement of case for a period of 9 months following the initiation of the suit. Subsequently, in June 2024, the Plaintiff filed a notice of discontinuance, effectively bringing the proceedings to an end without judicial determination on the merits of the constitutional issues raised.", outcome: "Withdrawn", outcomeClass: "withdrawn", outcomeDetail: "Plaintiff filed notice of discontinuance in June 2024 after failing to file statement of case for 9 months.", notable: ["Cecilia Abena Dapaah"] },
+  { id: 2, sortKey: 12, name: "First Petition for the removal of the Special Prosecutor", dateFiled: "2024-04-30", dateDisplay: "April 2024", petitioner: "Martin Amidu", type: "Executive", nature: "A petition seeking the removal of the Special Prosecutor, Kissi Agyebeng, was received by Nana Akufo-Addo on 30 April 2024. The petition alleged, among other things, procurement breaches, abuse of authority, and violations of citizens' rights. In accordance with the constitutional procedure, the President, on 6 May 2024, referred the petition to the Chief Justice, Her Ladyship Gertrude Torkornoo, for a prima facie determination. Upon review, the Chief Justice, on 2 July 2024, concluded that no prima facie case had been established to warrant the constitution of a committee of inquiry. The petition was accordingly dismissed, bringing the removal process to an end at the threshold stage.", outcome: "Dismissed", outcomeClass: "dismissed", outcomeDetail: "30 April 2024: Grounds for removal cited inter alia procurement breaches, abuse of authority and abuse of citizen rights.\n\n6 May 2024: The petition was forwarded to the Chief Justice, Her Ladyship Gertrude Torkornoo.\n\n2 July 2024: The Chief Justice determined that no prima facie evidence had been established to justify proceeding with the petition for the removal of the Special Prosecutor.", notable: ["Cecilia Abena Dapaah's case"] },
+  { id: 3, sortKey: 11, name: "Kenneth Kwabena Agyei Kuranchie v. Attorney-General & OSP (2nd Filing)", dateFiled: "2024-07-05", dateDisplay: "July 2024", petitioner: "Kenneth K.A. Kuranchie", type: "Supreme Court", nature: "Following the discontinuance of the initial action, Kenneth Kwabena Agyei Kuranchie refiled a fresh suit against the Attorney-General and the Office of the Special Prosecutor, seeking the same constitutional reliefs and reiterating his challenge to the legality of the OSP's independent prosecutorial mandate. Upon consideration, a seven-member panel of the Supreme Court, presided over by the Chief Justice, Her Ladyship Gertrude Torkornoo, reviewed the procedural history of the matter, including the prior notice of discontinuance. The Court determined that the refiled action constituted an abuse of process. Accordingly, the Court struck out the writ without liberty to reapply, effectively bringing the renewed challenge an end. In its remarks, the Court emphasized that the Office of the Special Prosecutor should not be burdened by repetitive litigation and must be allowed to carry out its statutory mandate without undue obstruction.", outcome: "Struck Out", outcomeClass: "struck", outcomeDetail: "After reviewing the notice of discontinuance, the 7-member panel presided over by Chief Justice G.S. Torkornoo struck out the writ without liberty to reapply, rendering the re-filed case moot. The Court further stated that the OSP should not be encumbered by such lawsuits and must be allowed to fulfil its mandate.", notable: ["Cecilia Abena Dapaah"] },
+  { id: 4, sortKey: 10, name: "Second Petition for the Removal of the Special Prosecutor", dateFiled: "2024-11-18", dateDisplay: "November 2024", petitioner: "Kenneth K.A. Kuranchie", type: "Executive", nature: "A second petition seeking the removal of the Special Prosecutor, Kissi Agyebeng, was submitted to Nana Akufo-Addo on 18 November 2024. The petition, filed by Kenneth Kwabena Agyei Kuranchie, alleged breaches of the Oath of Office and the Oath of Secrecy, citing alleged administration of polygraph tests on OSP officers by the FBI of the U.S. By correspondence dated 1 December 2024, the President informed the petitioner that the matter had been referred to the Chief Justice for review. No official public determination was subsequently reported; however, consistent with the constitutional process, the absence of any further action suggests that the petition did not meet the threshold for the establishment of a prima facie case and was accordingly not advanced beyond the preliminary stage.", outcome: "Dismissed", outcomeClass: "dismissed", outcomeDetail: "18 November 2024: Petition alleged breaches of the Oath of Office and the Oath of Secrecy by working with the FBI and conducting polygraph tests on OSP staff.\n\n1 December 2024: The President responded, informing Mr. Kuranchie that the petition had been referred to the Chief Justice for consideration.\n\nThere was no public reporting on the subsequent dismissal of the petition.", notable: ["Cecilia Abena Dapaah"] },
+  { id: 5, sortKey: 9, name: "Kuranchie Review Application", dateFiled: "2024-12-01", dateDisplay: "December 2024", petitioner: "Kenneth K.A. Kuranchie", type: "Supreme Court", nature: "An application was filed seeking a review of an earlier Supreme Court decision which had barred the applicant from reapplying, and which he sought to overturn in order to reinstate his capacity to challenge the constitutionality of the Office of the Special Prosecutor. The matter was heard by the full bench of the Supreme Court, with arguments presented by all parties. By a unanimous decision delivered on 11 December 2024, the Court dismissed the review application in its entirety. The Court held that the applicant's conduct—particularly his failure to file and subsequent discontinuance of earlier proceedings—amounted to a \"blatant abuse\" of the court's process. The decision effectively affirmed the earlier strike-out order and maintained the restriction on further litigation in respect of the matter.", outcome: "Dismissed", outcomeClass: "dismissed", outcomeDetail: "11 December 2024: After hearing arguments from all parties, the full bench of the Supreme Court unanimously dismissed his review application. The Court ruled the applicant's conduct — failing to file, then discontinuing — constituted a 'blatant abuse' of court process. Barred from further action.", notable: ["Cecilia Abena Dapaah"] },
+  { id: 6, sortKey: 8, name: "Third Petition for the Removal of the Special Prosecutor", dateFiled: "2025-10-01", dateDisplay: "October 2025", petitioner: "Coalition for Integrity in Governance (Simon Yaw Awadzi, Executive Chairman)", type: "Executive", nature: "A petition seeking the removal of the Special Prosecutor was received by President Mahama. The petition dated 1 December 2025, alleged grounds including financial mismanagement, incompetence, the withholding of dockets from the Attorney-General, and undue delay in the extradition processes relating to Ken Ofori-Atta. By a letter dated 26 January 2026, and communicated to the public on 18 February 2026, the Chief Justice informed the President that no prima facie case had been established against the Special Prosecutor upon consideration of the petition.", outcome: "Dismissed", outcomeClass: "dismissed", outcomeDetail: "1 December 2025: Grounds of petition cited alleged financial mismanagement, incompetence, withholding dockets from AG, and delaying Ken Ofori-Atta extradition.\n\n18 February 2026: The public was informed through a letter dated 26 January 2026 that the Chief Justice informed the President there was no prima facie case established against the Special Prosecutor, effectively dismissing the petition.", notable: ["Kenneth Nana Yaw Ofori Atta", "SML investigations"] },
+  { id: 7, sortKey: 7, name: "Fourth Petition for the Removal of the Special Prosecutor", dateFiled: "2025-11-01", dateDisplay: "November 2025", petitioner: "Self-styled Apostle Abraham Lincoln Larbi (assisted by Martin Kpebu)", type: "Executive", nature: "Another petition was submitted on 1 December 2025, raising allegations substantially similar to those contained in an earlier petition, including claims previously advanced against the Special Prosecutor. By a letter dated 26 January 2026, and communicated to the public on 18 February 2026, the Chief Justice informed the President that no prima facie case had been established against the Special Prosecutor upon consideration of the allegations.", outcome: "Dismissed", outcomeClass: "dismissed", outcomeDetail: "1 December 2025: Similar grounds of allegation as the Third Petition.\n\n18 February 2026: The public was informed through a letter dated 26 January 2026 that the Chief Justice informed the President there was no prima facie case established against the Special Prosecutor, effectively dismissing the petition.", notable: ["Kenneth Nana Yaw Ofori Atta", "SML investigations"] },
+  { id: 8, sortKey: 6, name: "Fifth Petition for the Removal of the Special Prosecutor", dateFiled: "2025-12-01", dateDisplay: "December 2025", petitioner: "Undisclosed Petitioner", type: "Executive", nature: "A petition dated 1 December 2025 was submitted, this time focusing on the Strategic Mobilisation Limited (SML) matter. The petitioner alleged that the Special Prosecutor had permitted Ken Ofori-Atta to leave the jurisdiction, failed to exercise available police powers to secure his arrest, and had made inaccurate representations regarding the extent of cooperation sought from security agencies. The matter was referred for consideration by the Chief Justice. By a letter dated 26 January 2026, and communicated to the public on 18 February 2026, the Chief Justice informed the President that no prima facie case had been established against the Special Prosecutor.", outcome: "Dismissed", outcomeClass: "dismissed", outcomeDetail: "1 December 2025: The petitioner accused the Special Prosecutor of allowing Ken Ofori-Atta to flee; failing to use police powers for arrest; and lying about having sought security agency support.\n\n18 February 2026: The public was informed through a letter dated 26 January 2026 that the Chief Justice found no prima facie case established against the Special Prosecutor,effectively dismissing the application.", notable: ["Kenneth Nana Yaw Ofori Atta", "SML investigations"] },
+  { id: 9, sortKey: 5, name: "Sixth Petition for the Removal of the Special Prosecutor", dateFiled: "2025-12-15", dateDisplay: "December 2025", petitioner: "Martin Kpebu", type: "Executive", nature: "The petition, formally submitted in December 2025, alleged incompetence, including the alleged failure to prevent Ken Ofori-Atta from leaving the country. It further cited abuse of office and alleged misrepresentation in relation to assertions that assistance had been sought from security agencies to prevent the said travel. By February 2026, the petitioner publicly indicated that his petition remained pending and had not yet been determined. The matter thereafter remained subject to the established procedural framework for consideration of petitions for the removal of the Special Prosecutor.", outcome: "Status Unknown", outcomeClass: "unknown", outcomeDetail: "November 2025: Martin Kpebu publicly announced he was preparing a petition to remove the Special Prosecutor.\n\nDecember 2025: The petition alleges incompetence, including failure to prevent Ken Ofori-Atta from leaving the country, as well as abuse of office and misrepresentation in claiming that assistance had been sought from security agencies to stop his travel.\n\nFebruary 2026: Kpebu himself indicated that his petition had still not been determined. NOTE: The time stipulated under the OSP Act for determination has LONG elapsed.", notable: [] },
+  { id: "11a", sortKey: 4, name: "Private Member’s Bill to Repeal the Office of the Special Prosecutor’s Act (Act 959)", dateFiled: "2025-12-08", dateDisplay: "December 2025", petitioner: "Mahama Ayariga (Majority Leader) & Rockson Dafeamekpor (Majority Chief Whip)", type: "Parliamentary", nature: "On 6 December 2025, the Speaker of Parliament, Alban Bagbin, together with a supermajority of Members of Parliament, reportedly reached a consensus in principle recommending the abolition of the Office of the Special Prosecutor. The position was framed within broader discussions on institutional reform and rationalisation of anti-corruption architecture within the State. On 8 December 2025, the Majority Leader and the Majority Chief Whip introduced a bill to repeal the Office of the Special Prosecutor Act, 2017 (Act 959), with the aim of dissolving the Office. However, on 11 December 2025, President John Mahama requested the withdrawal of the bill, describing it as premature.", outcome: "Withdrawn", outcomeClass: "withdrawn", outcomeDetail: "6 December 2025: The Speaker of Parliament, Alban Bagbin, together with Members of Parliament (super majority), unanimously agreed to recommend the abolition of the Office of the Special Prosecutor (OSP).\n\n8 December 2025: The Majority Leader and the Majority Chief Whip introduced a bill to repeal the Office of the Special Prosecutor Act, 2017 (Act 959), with the aim of dissolving the Office.\n\n11 December 2025: President John Mahama requested the withdrawal of the bill, describing it as premature.", notable: ["Arrest of Martin Kpebu"] },
+  { id: "11b", sortKey: 3, name: "Noah Ephraem Tetteh Adamtey v. Attorney-General", dateFiled: "2025-12-08", dateDisplay: "December 2025 - Present", petitioner: "Noah Ephraem Tetteh Adamtey", type: "Supreme Court", nature: "The Plaintiff invoked the Supreme Court's exclusive original jurisdiction, challenging the constitutionality of key provisions of the Office of the Special Prosecutor Act, 2017 (Act 959). The action sought, inter alia, a declaration that sections 3(3), 4, and 33 of Act 959 are unconstitutional, on the basis that they allegedly permit the Office of the Special Prosecutor to initiate and conduct prosecutions independently without the prior authorisation of the Attorney-General. On 15 December 2025, the Office of the Special Prosecutor filed a motion on notice seeking joinder to be added as a party to the proceedings. The Plaintiff subsequently filed an affidavit in opposition to the application for joinder, contesting the necessity of the Office's participation in the suit. By a ruling delivered on 27 January 2026, the Supreme Court refused the Office of the Special Prosecutor's application for joinder, holding that the Office was not a necessary party to the proceedings. On 8 April 2026, the Attorney-General filed an application for extension of time within which to file its statement of case. The Court, by its order of 16 April 2026, granted the Attorney-General seven (7) days within which to file the statement of case. On 22 April 2026, twelve (12) civil society organisations announced their intention to seek leave of the Court to file an amicus curiae brief in support of the constitutionality of the Special Prosecutor's independent prosecutorial powers.", outcome: "Ongoing", outcomeClass: "ongoing", outcomeDetail: "15 December 2025: the OSP filed a motion on notice for joinder to be a party to the suit.The Plaintiff filed an affidavit in opposition to the motion for joinder. \n\n 27 January 2026: Supreme Court refused OSP's application to join as party, holding OSP is not a necessary party. \n\n 8 April 2026: AG filed for extension of time to file statement of case..\n\n 16 April 2026: the Court granted the AG 7 days to file the statement of case.", notable: ["Import/refinery/distribution/sale of Petroleum Products (2026)", "Diversion of Palm Oil in-transit investigations (2026)", "Nana Yaw Duodu aka Dr. Sledge / MIIF funds", "Kenneth Nana Yaw Ofori-Atta Trial"] },
+  { id: 10, sortKey: 2, name: "Peter Archibald Hyde v. OSP", dateFiled: "2026-01-30", dateDisplay: "January 2026", petitioner: "Peter Archibald Hyde (defendant in The Republic v. Issah Seidu & 3 Ors — the Rice Scandal case)", type: "High Court", nature: "On 30 January 2026, Peter Archibald Hyde, a defendant in the Rice Scandal case, filed an action at the Accra High Court challenging the constitutional basis of the OSP's prosecutorial powers. After statements of case were filed in February – March 2026, the OSP raised a preliminary objection citing lack of jurisdiction and the pendency of the Adamtey case at the Supreme Court. On 9 March 2026, the Judge stayed proceedings. However, on 15 April 2026, the Judge reversed the stay, ruled that the OSP lacks prosecutorial powers without authorisation from the Attorney-General, set aside previous convictions secured by the OSP, and ordered all pending cases to be transferred to the AG's Department. On the same day, the OSP stated that it is taking steps to quickly overturn the decision of the General Jurisdiction Court since the High Court does not have jurisdiction to, in effect, strike down parts of an Act of Parliament as unconstitutional. On 16 April 2026, the Deputy AG, Justice Srem-Sai announced the readiness of the AG to take over OSP cases.", outcome: "Upheld", outcomeClass: "upheld", outcomeDetail: "February – March 2026: Parties file statements of case. OSP raises a preliminary objection—lack of jurisdiction and existence of a pending Supreme Court case (Adamtey v. Attorney-General, J1/3/2026). \n\n 9 March 2026: Judge stays proceedings, pending the Supreme Court’s determination.\n\n 8 April 2026: Applicant prepares and files his own hearing notice.\n\n 9 April 2026:Registrar issues the applicant-prepared hearing notice (unchanged).\n\n 14 April 2026:Hearing notice served on OSP for 8:00 a.m.\n\n 15 April 2026: Judge delivers ruling, effectively reversing the earlier stay and proceeding to determine the matter. Judge pronounces that OSP lacks prosecutorial powers and has not been mandated by OSP to prosecute, reverses all previous convictions and ordered all OSP-initiated cases transferred to A-G's department.The OSP stated that it is taking steps to quickly overturn the decision of the General Jurisdiction Court since the High Court does not have jurisdiction to, in effect, strike down parts of an Act of Parliament as unconstitutional. \n\n 16 April 2026:The Deputy AG, Justice Srem-Sai announced the readiness of the AG to take over OSP cases the next day.", notable: ["Import/refinery/distribution/sale of Petroleum Products (2026)", "Diversion of Palm Oil in-transit investigations (2026)", "Nana Yaw Duodu aka Dr. Sledge / MIIF funds", "Kenneth Nana Yaw Ofori-Atta Trial"] },
+  {
+    id: 13,
+    sortKey: 1,
+    name: "Application for Leave to File Amicus Curiae Brief by 14 CSOs",
+    dateFiled: "2026-05-06",
+    dateDisplay: "May 2026 - Present",
+    petitioner: "Coalition of 14 Civil Society Organizations",
+    type: "Supreme Court",
+    nature: "On 6 May 2026, a coalition of fourteen civil society organizations, including the Centre for Democratic Development (CDD-Ghana), filed an application at the Supreme Court seeking leave to be joined as Amici Curiae in the case of Noah Ephraim Tetteh Adamtey v. Attorney-General (J1/3/2026). The coalition’s intervention is motivated solely by a shared commitment to constitutionalism, accountable governance, anti-corruption, institutional integrity, and the preservation of independent public institutions established to serve the Republic of Ghana. The brief supports the constitutionality of the Office of the Special Prosecutor’s independent prosecutorial powers under Act 959. This follows their earlier public announcement on 22 April 2026 of their intention to file the amicus curiae brief.",
+    outcome: "Application Filed",
+    outcomeClass: "ongoing",
+    outcomeDetail: "22 April 2026: Public announcement of CSOs intention to file the amicus curiae brief in the ongoing Noah Adamtey v Attorney-General case to support the constitutionality of the OSP independent prosecutorial powers.\n\n 6 May 2026: The coalition of fourteen civil society organizations, filed an application at the Supreme Court seeking leave to be joined as Amici Curiae in the case of Noah Ephraim Tetteh Adamtey v. Attorney-General (J1/3/2026).",
+    notable: ["Noah Ephraem Tetteh Adamtey v. Attorney-General"]
+  }
+];
+
+let sortOrder = "desc";
+
+const statusIcon = {
+  ongoing: "fa-hourglass-half",
+  dismissed: "fa-ban",
+  withdrawn: "fa-rotate-left",
+  struck: "fa-gavel",
+  upheld: "fa-circle-exclamation",
+  unknown: "fa-circle-question"
+};
+
+const typeIcon = {
+  "Supreme Court": "fa-landmark",
+  "High Court": "fa-scale-balanced",
+  "Executive": "fa-user-tie",
+  "Parliamentary": "fa-building-columns"
+};
+
+function renderStats() {
+  const total = cases.length-1;
+  const dismissed = cases.filter(c => c.outcomeClass === "dismissed").length;
+  const ongoing = cases.filter(c => c.outcomeClass === "ongoing").length;
+  const concluded = cases.filter(c => ["withdrawn","struck","upheld"].includes(c.outcomeClass)).length;
+
+  document.getElementById("headerStats").innerHTML = `
+    <div class="stat-chip"><span class="num">${total}</span><span class="lbl">Total Cases</span></div>
+    <div class="stat-chip"><span class="num">${dismissed}</span><span class="lbl">Dismissed</span></div>
+    <div class="stat-chip"><span class="num">${ongoing}</span><span class="lbl">Ongoing</span></div>
+    <div class="stat-chip"><span class="num">${concluded}</span><span class="lbl">Concluded</span></div>
+  `;
+}
+
+function renderTimeline(filtered) {
+  const container = document.getElementById("timelineList");
+  const empty = document.getElementById("emptyState");
+  document.getElementById("resultsCount").textContent = `${filtered.length} case${filtered.length !== 1 ? "s" : ""} shown`;
+
+  if (filtered.length === 0) {
+    container.innerHTML = "";
+    empty.classList.remove("d-none");
+    return;
+  }
+  empty.classList.add("d-none");
+
+  container.innerHTML = filtered.map((c, idx) => {
+    const boldDates = txt => txt.replace(/(\b(?:\d{1,2}\s+)?(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{4}\b|\b\d{1,2}\s+(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{4}\b)/g, '<strong>$1</strong>');
+    const detailLines = c.outcomeDetail.split("\n\n").map(l => `<p style="margin-bottom:0.4rem;">${boldDates(l.trim())}</p>`).join("");
+    const pills = c.notable.length ? c.notable.map(n => `<span class="notable-pill">${n}</span>`).join("") : `<span style="font-size:0.78rem;color:var(--osp-muted);font-style:italic;">None recorded</span>`;
+    const iClass = typeIcon[c.type] || "fa-file-lines";
+    return `
+    <div class="timeline-item" style="animation-delay:${idx * 0.06}s" id="item-${c.id}">
+      <div class="timeline-spine">
+        <div class="spine-dot"></div>
+        <div class="spine-line"></div>
+      </div>
+      <div class="tracker-card" onclick="toggleCard('${c.id}')">
+        <div class="card-header-strip">
+          <div class="case-name">${c.name}</div>
+          <span class="status-badge ${c.outcomeClass}"><i class="fa-solid ${statusIcon[c.outcomeClass] || 'fa-circle'}"></i>${c.outcome}</span>
+        </div>
+        <div class="card-body-area">
+          <div class="meta-row">
+            <span class="meta-item"><i class="fa-regular fa-calendar"></i><strong>${c.dateDisplay}</strong></span>
+            <span class="meta-item"><i class="fa-regular fa-user"></i>${c.petitioner}</span>
+            <span class="jurisdiction-tag"><i class="fa-solid ${iClass}"></i>${c.type}</span>
+          </div>
+          <div style="font-size:0.82rem;color:var(--osp-muted);line-height:1.55;">${c.nature}</div>
+        </div>
+        <div class="toggle-row">
+          <button class="toggle-btn" id="btn-${c.id}"><i class="fa-solid fa-chevron-down"></i> View Details</button>
+        </div>
+        <div class="card-detail" id="detail-${c.id}">
+          <div class="detail-section">
+            <div class="detail-label"><i class="fa-solid fa-file-lines"></i> Outcome Detail</div>
+            <div class="detail-text">${detailLines}</div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label"><i class="fa-solid fa-star"></i> Notable Cases / Investigations within Period</div>
+            <div class="notable-pills">${pills}</div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function toggleCard(id) {
+  const detail = document.getElementById(`detail-${id}`);
+  const btn = document.getElementById(`btn-${id}`);
+  const isOpen = detail.classList.contains("open");
+  detail.classList.toggle("open", !isOpen);
+  btn.classList.toggle("open", !isOpen);
+  btn.innerHTML = isOpen ? `<i class="fa-solid fa-chevron-down"></i> View Details` : `<i class="fa-solid fa-chevron-up"></i> Hide Details`;
+}
+
+function applyFilters() {
+  const q = document.getElementById("searchInput").value.toLowerCase();
+  const st = document.getElementById("statusFilter").value;
+  const ty = document.getElementById("typeFilter").value;
+
+  let filtered = cases.filter(c => {
+    const matchQ = !q || [c.name, c.petitioner, c.outcome, c.nature, c.outcomeDetail, ...c.notable].join(" ").toLowerCase().includes(q);
+    const matchS = !st || c.outcomeClass === st;
+    const matchT = !ty || c.type === ty;
+    return matchQ && matchS && matchT;
+  });
+
+  filtered.sort((a, b) => sortOrder === "desc" ? a.sortKey - b.sortKey : b.sortKey - a.sortKey);
+  renderTimeline(filtered);
+}
+
+function toggleSort() {
+  sortOrder = sortOrder === "asc" ? "desc" : "asc";
+  const btn = document.getElementById("sortBtn");
+  const icon = document.getElementById("sortIcon");
+  const label = document.getElementById("sortLabel");
+  if (sortOrder === "desc") {
+    icon.className = "fa-solid fa-arrow-down-wide-short";
+    label.textContent = "Newest First";
+    btn.classList.add("active");
+  } else {
+    icon.className = "fa-solid fa-arrow-up-short-wide";
+    label.textContent = "Oldest First";
+    btn.classList.remove("active");
+  }
+  applyFilters();
+}
+
+renderStats();
+applyFilters();
+</script>
+</body>
+</html>
