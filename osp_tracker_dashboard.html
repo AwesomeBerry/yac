@@ -1,0 +1,1777 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tracker of Legal and Political Actions Relating to the OSP</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+    <style>
+        /* ══════════════════════════════════════════════
+   ROOT TOKENS
+══════════════════════════════════════════════ */
+:root {
+  --navy:       #0d1b2a;
+  --navy-mid:   #16263a;
+  --navy-light: #1f3350;
+  --gold:       #c9a84c;
+  --gold-dark:  #9e7c2e;
+  --gold-pale:  #f7f0de;
+  --gold-softer:#edd99a;
+  --cream:      #f8f5ee;
+  --white:      #ffffff;
+  --text:       #1a2332;
+  --text-mid:   #3d4f63;
+  --text-muted: #7a8fa6;
+  --border:     #dde4ee;
+  --border-mid: #c8d4e3;
+
+  --s-ongoing:   #0d7a4e; --s-ongoing-bg: #e6f7f1;
+  --s-dismissed: #c0392b; --s-dismissed-bg:#fdecea;
+  --s-withdrawn: #5b4fcf; --s-withdrawn-bg:#eeecfb;
+  --s-struck:    #b45309; --s-struck-bg:  #fef3e2;
+  --s-upheld:    #1d6fa4; --s-upheld-bg:  #e3f0fb;
+  --s-unknown:   #5a6b7c; --s-unknown-bg: #eef1f5;
+
+  --c-judicial:    #1d6fa4; --c-judicial-bg: #e3f0fb;
+  --c-executive:   #b45309; --c-executive-bg:#fef3e2;
+  --c-parliament:  #5b4fcf; --c-parliament-bg:#eeecfb;
+  --c-civil:       #0d7a4e; --c-civil-bg:   #e6f7f1;
+
+  --sidebar-w: 260px;
+  --right-w:   300px;
+  --nav-h:     60px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--white);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ══ TOP NAV ══ */
+.top-nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  height: var(--nav-h);
+  background: var(--navy);
+  display: flex; align-items: center;
+  padding: 0 1.5rem;
+  gap: 1rem;
+  box-shadow: 0 2px 20px rgba(0,0,0,0.25);
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0;
+  text-decoration: none;
+}
+.nav-logo-seal {
+  width: 38px; height: 38px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; color: white;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(201,168,76,0.4);
+}
+.nav-logo-text { line-height: 1.2; }
+.nav-logo-text .t1 { display: block; font-size: 0.72rem; font-weight: 700; color: var(--gold); text-transform: uppercase; letter-spacing: 0.08em; }
+.nav-logo-text .t2 { display: block; font-size: 0.68rem; color: rgba(255,255,255,0.55); }
+
+.nav-links {
+  display: flex; align-items: center; gap: 0.25rem;
+  list-style: none; margin-left: 1.5rem; flex: 1;
+}
+.nav-links a {
+  color: rgba(255,255,255,0.65); text-decoration: none; font-size: 0.82rem;
+  font-weight: 500; padding: 0.45rem 0.9rem; border-radius: 8px;
+  transition: all 0.18s;
+}
+.nav-links a:hover { color: white; background: rgba(255,255,255,0.07); }
+.nav-links a.active { color: var(--gold); border-bottom: 2px solid var(--gold); border-radius: 0; }
+.nav-links a .fa { margin-right: 0.35rem; font-size: 0.72rem; }
+.nav-right {
+  display: flex; align-items: center; gap: 0.75rem; margin-left: auto;
+}
+.nav-date {
+  font-size: 0.72rem; color: rgba(255,255,255,0.45);
+  border: 1px solid rgba(255,255,255,0.12);
+  padding: 0.3rem 0.75rem; border-radius: 50px;
+  white-space: nowrap;
+}
+.nav-avatar {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: var(--gold); color: var(--navy);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.7rem; font-weight: 800; cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* ══ APP SHELL ══ */
+.app-shell {
+  display: grid;
+  grid-template-columns: var(--sidebar-w) 1fr;
+  grid-template-rows: auto 1fr;
+  min-height: 100vh;
+  padding-top: var(--nav-h);
+}
+
+/* ══ DASHBOARD HEADER ══ */
+.dash-header {
+  grid-column: 1 / -1;
+  background: linear-gradient(135deg, var(--navy) 0%, #5a4105 60%, #5c3a0f 100%) ;
+  color: white;
+  padding: 2rem 2rem 3rem;
+  position: relative; overflow: hidden;
+}
+.dash-header::before {
+  content: ''; position: absolute;
+  top: -40px; right: -60px; width: 280px; height: 280px;
+  background: rgba(201,168,76,0.07); border-radius: 50%;
+}
+.dash-header::after {
+  content: ''; position: absolute;
+  bottom: -80px; left: 30%; width: 220px; height: 220px;
+  background: rgba(255,255,255,0.03); border-radius: 50%;
+}
+.dash-header-inner {
+  position: relative; z-index: 1;
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 2rem;
+  max-width: 100%;
+}
+.dash-header-left { flex: 1; }
+.dash-breadcrumb {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  font-size: 0.67rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 0.85rem;
+}
+.dash-breadcrumb i { font-size: 0.6rem; }
+.dash-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(1.5rem, 3vw, 2.4rem);
+  font-weight: 400; line-height: 1.2;
+  margin-bottom: 0.6rem;
+  letter-spacing: -0.01em;
+/*  color: var(--navy-mid);*/
+}
+.dash-subtitle {
+  font-size: 0.88rem; opacity: 0.72; line-height: 1.65;
+  max-width: 640px; font-weight: 300;
+/*  color: var(--navy-light);*/
+}
+
+/* Header stat cards (top right) */
+.dash-stat-box {
+  background: #442f08;
+  border: 1px solid rgba(201,168,76,0.3);
+  border-radius: 16px; padding: 3rem 1.5rem;
+  text-align: center; min-width: 200px;
+  backdrop-filter: blur(8px);
+}
+.dash-stat-box .big-num {
+  font-family: 'DM Serif Display', serif;
+  font-size: 3rem; line-height: 1; color: var(--gold);
+  display: block;
+}
+.dash-stat-box .big-label {
+  font-size: 1.2rem; color: rgba(255,255,255,0.65);
+  margin-top: 0.2rem; display: block;
+}
+.dash-stat-box .trend {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  font-size: 0.9rem; color: white; margin-top: 0.4rem;
+  background: rgba(93,222,154,0.12); border-radius: 50px;
+  padding: 0.18rem 0.6rem;
+}
+
+/* Mini bar chart in header */
+.mini-bars {
+  display: flex; align-items: flex-end; gap: 3px;
+  height: 40px; margin-top: 0.6rem;
+}
+.mini-bar {
+  width: 14px; border-radius: 3px 3px 0 0;
+  background: rgba(201,168,76,0.4);
+  transition: background 0.2s;
+}
+.mini-bar.active { background: var(--gold); }
+.mini-bar:hover { background: var(--gold); }
+
+/* ══ HEADER SUMMARY STATS ROW ══ */
+.header-stats-row {
+  grid-column: 1 / -1;
+  background: white;
+  border-bottom: 1px solid var(--border);
+  padding: 0rem;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  margin-bottom: 20px ;
+}
+.hstat-cell {
+  display: flex; align-items: center; gap: 1rem;
+  padding: 1.1rem 1.5rem;
+  border-right: 1px solid var(--border);
+  transition: background 0.18s;
+}
+.hstat-cell:last-child { border-right: none; }
+.hstat-cell:hover { background: var(--cream); }
+.hstat-icon {
+  width: 46px; height: 46px; border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.15rem; flex-shrink: 0;
+}
+.hstat-icon.navy { background: rgba(13,27,42,0.08); color: var(--navy); }
+.hstat-icon.gold  { background: rgba(201,168,76,0.15); color: var(--gold-dark); }
+.hstat-icon.blue  { background: rgba(29,111,164,0.1); color: var(--c-judicial); }
+.hstat-icon.green { background: rgba(13,122,78,0.1); color: var(--s-ongoing); }
+.hstat-num { font-family: 'DM Serif Display', serif; font-size: 1.85rem; font-weight: 400; line-height: 1; color: var(--text); }
+.hstat-lbl { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-top: 0.15rem; font-weight: 500; }
+.hstat-sub { font-size: 0.67rem; color: var(--text-muted); margin-top: 0.1rem; }
+
+/* ══ LEFT SIDEBAR ══ */
+.sidebar {
+  background: #d8d8d885;
+  border-right: 1px solid var(--border);
+  padding: 1.5rem 1.25rem;
+  overflow-y: auto;
+  height: calc(100vh - var(--nav-h));
+  position: sticky;
+  top: calc(var(--nav-h));
+  align-self: start;
+}
+.sidebar-section { margin-bottom: 1.6rem; }
+.sidebar-label {
+  font-size: 0.63rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.13em; color: var(--text-muted);
+  margin-bottom: 0.7rem; display: flex; align-items: center;
+  justify-content: space-between;
+}
+.sidebar-label a {
+  font-size: 0.6rem; color: var(--gold-dark); text-decoration: none;
+  font-weight: 600; letter-spacing: 0.05em;
+}
+.sidebar-label a:hover { text-decoration: underline; }
+
+/* Search */
+.sidebar-search {
+  position: relative;
+}
+.sidebar-search i {
+  position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%);
+  color: var(--text-muted); font-size: 0.75rem;
+}
+.sidebar-search input {
+  width: 100%; padding: 0.6rem 0.75rem 0.6rem 2.1rem;
+  border: 1.5px solid var(--border); border-radius: 10px;
+  font-family: 'DM Sans', sans-serif; font-size: 0.83rem;
+  background: var(--cream); color: var(--text);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.sidebar-search input:focus {
+  outline: none; border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(201,168,76,0.12);
+}
+
+/* Filter checkboxes */
+.filter-item {
+  display: flex; align-items: center; gap: 0.6rem;
+  padding: 0.42rem 0.6rem; border-radius: 8px; cursor: pointer;
+  transition: background 0.15s; margin-bottom: 0.2rem;
+  font-size: 0.83rem; color: var(--text-mid); font-weight: 500;
+}
+.filter-item:hover { background: var(--cream); }
+.filter-item input[type=checkbox] { display: none; }
+.filter-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  flex-shrink: 0; border: 2px solid currentColor;
+  transition: background 0.15s;
+}
+.filter-item.checked .filter-dot { background: currentColor; }
+.filter-item .filter-count {
+  margin-left: auto; font-size: 0.69rem; color: var(--text-muted);
+  background: var(--cream); border-radius: 50px;
+  padding: 0.05rem 0.5rem; font-weight: 600;
+  border: 1px solid var(--border);
+}
+
+/* Sidebar select */
+.sidebar-select {
+  width: 100%; padding: 0.55rem 2rem 0.55rem 0.75rem;
+  border: 1.5px solid var(--border); border-radius: 10px;
+  font-family: 'DM Sans', sans-serif; font-size: 0.83rem;
+  color: var(--text); background: var(--cream);
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 11 7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' stroke='%237a8fa6' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 0.65rem center;
+  cursor: pointer; margin-bottom: 0.6rem;
+  transition: border-color 0.2s;
+}
+.sidebar-select:focus { outline: none; border-color: var(--gold); }
+
+/* Apply filters button */
+.btn-apply {
+  width: 100%; padding: 0.65rem;
+  background: var(--navy); color: white;
+  border: none; border-radius: 10px; font-family: 'DM Sans', sans-serif;
+  font-size: 0.84rem; font-weight: 600; cursor: pointer;
+  transition: background 0.2s; letter-spacing: 0.01em;
+}
+.btn-apply:hover { background: var(--navy-light); }
+
+/* ══ MAIN CONTENT ══ */
+.main-content {
+  background: #f6f4f4;
+  padding: 1.5rem;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+/* View tabs */
+.view-tabs {
+  display: flex; align-items: center; gap: 0;
+  background: white; border: 1px solid var(--border);
+  border-radius: 12px; padding: 0.3rem;
+  margin: 1.25rem auto; width: fit-content;
+}
+.view-tab {
+  padding: 0.45rem 1rem; border-radius: 8px; cursor: pointer;
+  font-size: 0.8rem; font-weight: 600; color: var(--text-muted);
+  transition: all 0.18s; display: flex; align-items: center; gap: 0.4rem;
+  border: none; background: none; font-family: 'DM Sans', sans-serif;
+}
+
+.view-tabs-row { background:#e9e9e9a3 }
+
+.view-tab.active { background: var(--navy); color: white; }
+.view-tab:hover:not(.active) { color: var(--text); background: var(--cream); }
+
+/* Sort row */
+.sort-row {
+  display: flex; align-items: center; gap: 0.75rem; margin: 1.25rem auto;
+  flex-wrap: wrap;
+}
+.sort-label { font-size: 0.78rem; color: var(--text-muted); }
+.sort-select {
+  padding: 0.4rem 2rem 0.4rem 0.7rem; border: 1.5px solid var(--border);
+  border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 0.8rem;
+  color: var(--text); background: white;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 11 7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' stroke='%237a8fa6' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 0.5rem center;
+  cursor: pointer;
+}
+.sort-select:focus { outline: none; border-color: var(--gold); }
+.results-badge {
+  margin-left: auto; font-size: 0.75rem; color: var(--text-muted);
+  background: white; border: 1px solid var(--border);
+  padding: 0.35rem 0.85rem; border-radius: 50px; font-weight: 600;
+}
+
+/* Category pills in main */
+.cat-pills {
+  display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1.5rem;
+}
+.cat-pill {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  padding: 0.3rem 0.85rem; border-radius: 50px; cursor: pointer;
+  font-size: 0.69rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+  border: 1.5px solid transparent; transition: all 0.18s;
+}
+.cat-pill.all     { background: var(--navy); color: white; border-color: var(--navy); }
+.cat-pill.judicial    { background: var(--c-judicial-bg);  color: var(--c-judicial);  border-color: var(--c-judicial); }
+.cat-pill.executive   { background: var(--c-executive-bg); color: var(--c-executive); border-color: var(--c-executive); }
+.cat-pill.parliament  { background: var(--c-parliament-bg); color: var(--c-parliament); border-color: var(--c-parliament); }
+.cat-pill.civil       { background: var(--c-civil-bg);     color: var(--c-civil);     border-color: var(--c-civil); }
+.cat-pill:not(.active) { opacity: 0.45; }
+.cat-pill.active { opacity: 1; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.cat-pill:hover { opacity: 0.85; }
+
+/* ══ TIMELINE ══ */
+.timeline { position: relative; padding-left: 2rem; }
+.timeline::before {
+  content: ''; position: absolute;
+  left: 7px; top: 0; bottom: 0; width: 3px;
+  background: linear-gradient(to bottom, var(--gold), var(--border), transparent);
+  border-radius: 2px;
+}
+
+/* Year divider */
+.year-divider {
+  display: flex; align-items: center; gap: 0.75rem;
+  margin: 2rem 0 1.25rem; position: relative;
+}
+.year-divider::before {
+  content: ''; position: absolute; left: -1.9rem; width: 14px; height: 14px;
+  background: var(--gold); border-radius: 50%; border: 3px solid white;
+  box-shadow: 0 0 0 3px rgba(201,168,76,0.2);
+  top: 50%; transform: translateY(-50%);
+}
+.year-badge {
+  background: var(--navy); color: var(--gold);
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.1rem; padding: 0.35rem 1.2rem;
+  border-radius: 50px;
+  box-shadow: 0 3px 12px rgba(13,27,42,0.15);
+  letter-spacing: 0.02em;
+}
+
+/* Timeline item */
+.tl-item {
+  position: relative; margin-bottom: 1.5rem;
+  display: flex; align-items: flex-start; gap: 1rem;
+  animation: fadeUp 0.35s ease both;
+}
+@keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+.tl-dot-wrap {
+  position: absolute; left: -2rem;
+  display: flex; flex-direction: column; align-items: center;
+}
+.tl-dot {
+  width: 16px; height: 16px; border-radius: 50%;
+  background: white; border: 4px solid var(--gold);
+  flex-shrink: 0; margin-top: 1.4rem; z-index: 2;
+  box-shadow: 0 0 0 4px rgba(201,168,76,0.12);
+  transition: transform 0.2s;
+}
+.tl-item:hover .tl-dot { transform: scale(1.3); }
+
+/* Card */
+.tl-card {
+  flex: 1; background: white;
+  border-radius: 16px; overflow: hidden;
+  border: 1px solid var(--border);
+/*  border-left: 5px solid var(--gold);*/
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+  transition: box-shadow 0.25s, transform 0.22s;
+  cursor: pointer;
+  position: relative;
+}
+.tl-card:hover { box-shadow: 0 10px 30px rgba(0,0,0,0.09); transform: translateY(-2px); }
+/*.tl-card.ongoing   { border-left-color: var(--s-ongoing); }
+.tl-card.dismissed { border-left-color: var(--s-dismissed); }
+.tl-card.withdrawn { border-left-color: var(--s-withdrawn); }
+.tl-card.struck    { border-left-color: var(--s-struck); }
+.tl-card.upheld    { border-left-color: var(--s-upheld); }
+.tl-card.unknown   { border-left-color: var(--s-unknown); }*/
+
+/* Card header */
+.card-top {
+  padding: 1rem 1.25rem 0.75rem;
+  background: linear-gradient(135deg, rgba(248,245,238,0.9) 0%, white 60%);
+/*  border-bottom: 1px solid var(--border);*/
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem;
+}
+.card-top-left { flex: 1; }
+.card-case-id {
+  font-size: 0.6rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.12em; color: var(--text-muted); margin-bottom: 0.2rem;
+}
+.card-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(0.9rem, 1.8vw, 1.05rem);
+  color: var(--text); line-height: 1.35; margin-bottom: 0.3rem;
+}
+.card-cat {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  font-size: 0.63rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+}
+.card-cat.judicial   { color: var(--c-judicial); }
+.card-cat.executive  { color: var(--c-executive); }
+.card-cat.parliament { color: var(--c-parliament); }
+.card-cat.civil      { color: var(--c-civil); }
+
+/* Status badge */
+.status-badge {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+  padding: 0.28rem 0.75rem; border-radius: 50px; white-space: nowrap; flex-shrink: 0;
+}
+.status-badge.ongoing   { background: var(--s-ongoing-bg);   color: var(--s-ongoing); }
+.status-badge.dismissed { background: var(--s-dismissed-bg); color: var(--s-dismissed); }
+.status-badge.withdrawn { background: var(--s-withdrawn-bg); color: var(--s-withdrawn); }
+.status-badge.struck    { background: var(--s-struck-bg);    color: var(--s-struck); }
+.status-badge.upheld    { background: var(--s-upheld-bg);    color: var(--s-upheld); }
+.status-badge.unknown   { background: var(--s-unknown-bg);   color: var(--s-unknown); }
+
+/* Card meta + body */
+.card-meta {
+  display: flex; align-items: center; gap: 0; flex-wrap: wrap;
+  background: var(--cream); border-radius: 8px; overflow: hidden;
+  border: 1px solid var(--border); margin-bottom: 0.8rem; font-size: 0.75rem;
+}
+.meta-item {
+  display: flex; align-items: center; gap: 0.35rem;
+  padding: 0.4rem 0.85rem; color: var(--text-mid);
+  border-right: 1px solid var(--border);
+}
+.meta-item:last-child { border-right: none; }
+.meta-item i { color: var(--gold-dark); font-size: 0.7rem; }
+.meta-item strong { color: var(--text); font-weight: 600; }
+.jurisdiction-tag {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+  padding: 0.18rem 0.6rem; border-radius: 5px;
+  background: var(--navy); color: white;
+}
+.card-body-pad { padding: 0.85rem 1.25rem 0.4rem; }
+.narration {
+  font-size: 0.87rem; line-height: 1.72; color: var(--text-mid);
+  margin-bottom: 0.5rem;
+}
+
+/* View details */
+.view-details-row {
+  display: flex; align-items: center; justify-content: flex-end;
+  padding: 0.5rem 1.25rem 0.85rem;
+}
+.view-details-btn {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  font-size: 0.77rem; font-weight: 700; color: var(--gold-dark);
+  background: none; border: none; cursor: pointer;
+  font-family: 'DM Sans', sans-serif; transition: color 0.18s;
+}
+.view-details-btn:hover { color: var(--navy); }
+.view-details-btn i { transition: transform 0.3s; font-size: 0.65rem; }
+.view-details-btn.open i { transform: rotate(180deg); }
+
+/* Detail panel */
+.card-detail {
+  max-height: 0; overflow: hidden; transition: max-height 0.5s ease;
+  border-top: 1px solid var(--border);
+}
+.card-detail.open { max-height: 2000px; }
+.detail-inner {
+  background: var(--cream); margin: 0;
+  padding: 1.2rem 1.25rem 1.4rem;
+}
+.detail-section { margin-bottom: 1rem; }
+.detail-section:last-child { margin-bottom: 0; }
+.detail-label {
+  font-size: 0.62rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.13em; color: var(--gold-dark);
+  display: flex; align-items: center; gap: 0.4rem;
+  margin-bottom: 0.5rem; padding-bottom: 0.3rem;
+  border-bottom: 1px dashed var(--gold-softer);
+}
+.detail-text { font-size: 0.84rem; line-height: 1.7; color: var(--text); }
+.detail-text p { margin-bottom: 0.45rem; }
+.detail-text p:last-child { margin-bottom: 0; }
+.why-matters {
+  background: white; border: 1px solid var(--gold-softer);
+  border-left: 3px solid var(--gold); border-radius: 10px;
+  padding: 0.8rem 1rem; font-size: 0.84rem; line-height: 1.68; color: var(--text);
+}
+.why-matters strong {
+  display: block; color: var(--gold-dark); font-size: 0.62rem;
+  text-transform: uppercase; letter-spacing: 0.09em; margin-bottom: 0.3rem;
+}
+.sources-wrap { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.3rem; }
+.source-chip {
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  font-size: 0.68rem; padding: 0.25rem 0.7rem; border-radius: 50px;
+  background: white; color: var(--navy); border: 1px solid var(--border);
+  font-weight: 600; text-decoration: none; transition: background 0.18s;
+}
+.source-chip:hover { background: var(--gold-pale); color: var(--navy); }
+.notable-pills { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.3rem; }
+.notable-pill {
+  font-size: 0.68rem; padding: 0.25rem 0.7rem; border-radius: 50px;
+  background: white; color: var(--text-mid); border: 1px solid var(--border); font-weight: 500;
+}
+
+/* ══ RIGHT ANALYTICS PANEL ══ */
+.analytics-panel {
+  background: white;
+  border-left: 1px solid var(--border);
+  padding: 1.4rem 1.25rem;
+  overflow-y: auto;
+  height: calc(100vh - var(--nav-h) - 60px);
+  position: sticky;
+  top: calc(var(--nav-h) + 60px);
+  align-self: start;
+}
+.analytics-title {
+  font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.1em; color: var(--text-muted);
+  margin-bottom: 1.2rem; padding-bottom: 0.6rem;
+  border-bottom: 1px solid var(--border);
+}
+.analytics-section { margin-bottom: 1.6rem; }
+.analytics-section-title {
+  font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.09em; color: var(--text); margin-bottom: 0.8rem;
+}
+
+/* Donut chart */
+.donut-wrap {
+  position: relative; width: 110px; height: 110px; margin: 0 auto 0.75rem;
+}
+.donut-wrap svg { transform: rotate(-90deg); }
+.donut-center {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  text-align: center;
+}
+.donut-center .d-num {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.5rem; color: var(--text); display: block; line-height: 1;
+}
+.donut-center .d-lbl { font-size: 0.55rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; }
+.donut-legend { display: flex; flex-direction: column; gap: 0.4rem; }
+.donut-legend-item {
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 0.73rem; color: var(--text-mid);
+}
+.donut-legend-item .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-right: 0.45rem; }
+.donut-legend-item .pct { font-weight: 700; color: var(--text); margin-left: auto; font-size: 0.72rem; }
+
+/* Status bar chart */
+.status-bar-row {
+  margin-bottom: 0.7rem;
+}
+.status-bar-row .sb-top {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 0.3rem;
+}
+.status-bar-row .sb-label { font-size: 0.73rem; color: var(--text-mid); font-weight: 500; }
+.status-bar-row .sb-count { font-size: 0.73rem; font-weight: 700; color: var(--text); }
+.status-bar-row .sb-track { height: 7px; background: var(--cream); border-radius: 50px; overflow: hidden; }
+.status-bar-row .sb-fill  { height: 100%; border-radius: 50px; transition: width 0.6s ease; }
+
+/* Sparkline / over-time chart */
+.over-time-chart { height: 80px; position: relative; }
+.ot-svg { width: 100%; height: 100%; }
+
+/* Top institutions list */
+.top-inst-list { display: flex; flex-direction: column; gap: 0.45rem; }
+.top-inst-row {
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 0.74rem; color: var(--text-mid); padding: 0.3rem 0;
+  border-bottom: 1px solid var(--border);
+}
+.top-inst-row:last-child { border-bottom: none; }
+.top-inst-row .inst-name { font-weight: 500; }
+.top-inst-row .inst-count {
+  background: var(--cream); border: 1px solid var(--border);
+  border-radius: 50px; padding: 0.1rem 0.55rem;
+  font-size: 0.68rem; font-weight: 700; color: var(--text);
+}
+
+/* Full analytics button */
+.btn-full-analytics {
+  width: 100%; padding: 0.65rem;
+  background: var(--cream); border: 1.5px solid var(--border);
+  border-radius: 10px; font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem; font-weight: 700; color: var(--navy);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  gap: 0.4rem; transition: all 0.2s; margin-top: 1.2rem;
+  text-decoration: none;
+}
+.btn-full-analytics:hover {
+  background: var(--navy); color: white; border-color: var(--navy);
+}
+
+/* ══ EMPTY STATE ══ */
+.empty-state {
+  text-align: center; padding: 4rem 1.5rem; color: var(--text-muted);
+}
+.empty-state i { font-size: 2.5rem; color: var(--border-mid); margin-bottom: 1rem; display: block; }
+.empty-state h5 { font-family: 'DM Serif Display', serif; color: var(--text); font-size: 1.1rem; }
+
+/* ══ FOOTER ══ */
+.app-footer {
+  grid-column: 1 / -1;
+  background: var(--navy);
+  padding: 2.5rem 3rem;
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  gap: 2rem 3rem;
+  align-items: start;
+}
+.footer-brand .fb-name {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1rem; color: white; margin-bottom: 0.35rem; display: block;
+}
+.footer-brand .fb-sub { font-size: 0.73rem; color: rgba(255,255,255,0.4); font-style: italic; }
+.footer-col-title { font-size: 0.63rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--gold); margin-bottom: 0.75rem; }
+.footer-links { list-style: none; display: flex; flex-direction: column; gap: 0.4rem; }
+.footer-links a { font-size: 0.8rem; color: rgba(255,255,255,0.55); text-decoration: none; transition: color 0.18s; }
+.footer-links a:hover { color: white; }
+.footer-bottom {
+  grid-column: 1 / -1; padding-top: 1.5rem;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 0.75rem;
+}
+.footer-bottom span { font-size: 0.72rem; color: rgba(255,255,255,0.3); }
+
+/* ══ DISCLAIMER ══ */
+.disclaimer {
+  grid-column: 1 / -1;
+  background: #fffbec; border-bottom: 1px solid #e6d97a;
+  padding: 0.55rem 2rem; display: flex; align-items: flex-start; gap: 0.65rem;
+  font-size: 0.74rem; color: #574610; line-height: 1.55;
+}
+.disclaimer i { color: #c9a84c; flex-shrink: 0; margin-top: 2px; }
+.disclaimer strong { color: #6b4e0c; }
+
+
+
+    /* ── INSTITUTIONAL CONTEXT PANEL ── */
+    .context-panel { max-width: 1200px; margin: 1.5rem auto 0; padding: 0 2rem; }
+    .context-toggle { width:100%;  font-size:0.82rem; font-weight:600; color:var(--osp-gold-dark); }
+    .context-toggle:hover { background: var(--osp-gold-softer); }
+    .context-toggle.open i.chevron { transform:rotate(180deg); }
+    .context-body.open { max-height:600px; }
+    .context-body-inner { background:white; border:1px solid var(--osp-gold-softer); border-top:none; border-radius:0 0 1rem 1rem; padding:1.3rem 1.6rem 1.5rem; }
+    .context-card { background:var(--osp-cream); border:1px solid var(--osp-gold-pale); border-left:3px solid var(--osp-gold); border-radius:8px; padding:0.9rem 1rem; }
+    .context-card h6 { font-family:'Playfair Display',serif; font-size:0.87rem; color:var(--osp-gold-dark); margin-bottom:0.4rem; }
+    .context-card p { font-size:0.79rem; line-height:1.6; color:var(--osp-muted); margin:0; }
+
+
+
+
+/* ══ RESPONSIVE ══ */
+@media (max-width: 1100px) {
+  :root { --right-w: 260px; --sidebar-w: 220px; }
+}
+@media (max-width: 900px) {
+  .app-shell { grid-template-columns: 1fr; grid-template-rows: auto auto 1fr; }
+  .dash-header { grid-column: 1; }
+  .header-stats-row { grid-template-columns: repeat(2,1fr); }
+  .sidebar, .analytics-panel { display: none; }
+  .main-content { grid-column: 1; }
+  .app-footer { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 600px) {
+  .header-stats-row { grid-template-columns: 1fr 1fr; }
+  .dash-header-inner { flex-direction: column; }
+  .dash-stat-box { min-width: auto; }
+  .app-footer { grid-template-columns: 1fr; }
+  .nav-links { display: none; }
+}
+@media print {
+  .sidebar, .analytics-panel, .top-nav, .view-details-row { display: none; }
+  .app-shell { display: block; padding-top: 0; }
+  .main-content { display: block; }
+  .card-detail { max-height: none !important; }
+}
+
+
+
+
+
+</style>
+</head>
+
+<body>
+    <!-- ══ TOP NAVIGATION ══ -->
+    <nav class="top-nav">
+        <a href="https://osp.gov.gh" target="_blank" rel="noopener" class="nav-logo" style="padding:40px 10px;">
+            <img src="https://osp.gov.gh/static/asset/images/logo/osp-footer.png" alt="OSP logo" style="width:210px;">
+        </a>
+        <ul class="nav-links">
+            <li><a href="https://osp.gov.gh" target="_blank"><i class="fa fa-home"></i>Home</a></li>
+            <li><a href="#" class="active"><i class="fa fa-table-list"></i>Dashboard</a></li>
+            <li><a href="#" onclick="return false;"><i class="fa fa-landmark-dome"></i>Actions</a></li>
+            <!-- <li><a href="#" onclick="return false;"><i class="fa fa-building-columns"></i>Institutions</a></li>
+            <li><a href="#" onclick="return false;"><i class="fa fa-chart-line"></i>Analytics</a></li>
+            <li><a href="#" onclick="return false;"><i class="fa fa-file-lines"></i>Reports</a></li>
+            <li><a href="https://osp.gov.gh" target="_blank"><i class="fa fa-globe"></i>Resources</a></li> -->
+        </ul>
+        <div class="nav-right">
+            <span class="nav-date"><i class="fa-regular fa-clock me-1"></i>Data as of May 12, 2026</span>
+            <div class="nav-avatar">JD</div>
+        </div>
+    </nav>
+    <!-- ══ APP SHELL ══ -->
+    <div class="app-shell">
+        <!-- ══ LEFT SIDEBAR ══ -->
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-label">
+                    FILTERS <a href="#" onclick="clearFilters();return false;">Clear all</a>
+                </div>
+                <div class="sidebar-search">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="searchInput" placeholder="Search actions…" oninput="applyFilters()" />
+                </div>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-label">YEAR</div>
+                <select class="sidebar-select" id="yearFilter" onchange="applyFilters()">
+                    <option value="">All Years</option>
+                    <option value="2023">2023</option>
+                    <option value="2024">2024</option>
+                    <option value="2025">2025</option>
+                    <option value="2026">2026</option>
+                </select>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-label">ACTION TYPE</div>
+                <div id="typeFilters"></div>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-label">INSTITUTION</div>
+                <select class="sidebar-select" id="institutionFilter" onchange="applyFilters()">
+                    <option value="">All Institutions</option>
+                    <option value="Supreme Court">Supreme Court of Ghana</option>
+                    <option value="High Court">High Court of Justice</option>
+                    <option value="Executive">Office of the President</option>
+                    <option value="Parliamentary">Parliament of Ghana</option>
+                </select>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-label">JURISDICTION</div>
+                <select class="sidebar-select" id="jurisdictionFilter" onchange="applyFilters()">
+                    <option value="">All Jurisdictions</option>
+                    <option value="Supreme Court">Supreme Court</option>
+                    <option value="High Court">High Court</option>
+                    <option value="Executive">Executive</option>
+                    <option value="Parliamentary">Parliamentary</option>
+                </select>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-label">STATUS</div>
+                <div id="statusFilters"></div>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-label">PRIORITY LEVEL</div>
+                <select class="sidebar-select" id="priorityFilter" onchange="applyFilters()">
+                    <option value="">All Priorities</option>
+                    <option value="high">High (Ongoing / Ruling)</option>
+                    <option value="medium">Medium (Unknown)</option>
+                    <option value="low">Low (Resolved)</option>
+                </select>
+            </div>
+            <button class="btn-apply" onclick="applyFilters()">Apply Filters</button>
+        </aside>
+        <!-- ══ MAIN CONTENT ══ -->
+        <main class="main-content">
+            <!-- DISCLAIMER -->
+            <div class="disclaimer">
+                <i class="fa-solid fa-circle-info fa-sm"></i>
+                <span><strong>Notice:</strong> This tracker documents major legal, political, administrative, and parliamentary actions that have affected, challenged, or sought to redefine the mandate, powers, independence, or leadership of the Office of the Special Prosecutor since 2023. It is intended as a publicly accessible institutional record for researchers, legal practitioners, journalists, policymakers, and citizens. <strong>Inclusion does not imply illegality, misconduct, or bad faith by any actor.</strong> Continuously updated as proceedings evolve.</span>
+            </div>
+            <!-- DASHBOARD HEADER -->
+            <div class="dash-header">
+                <div class="dash-header-inner">
+                    <div class="dash-header-left">
+                        <div class="dash-breadcrumb">
+                            <i class="fa-solid fa-gauge"></i> Tracker Dashboard
+                        </div>
+                        <h1 class="dash-title">Tracker of Legal and Political Actions<br>Relating to the OSP</h1>
+                        <p class="dash-subtitle">A chronological institutional record of legal, political, and parliamentary actions that have affected, challenged, or sought to redefine the mandate, powers, independence, or leadership of the Office of the Special Prosecutor.</p>
+                    </div>
+                    <div class="dash-stat-box">
+                        <span class="big-num" id="hdr-total">15</span>
+                        <span class="big-label">Total Actions</span>
+                        <div class="trend"><i class="fa fa-arrow-trend-up"></i> Timeline Activity (Last 24 Months)</div>
+                        <div class="mini-bars" id="miniBarChart" style="display: none;"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- HEADER STATS ROW -->
+            <div class="header-stats-row">
+                <div class="hstat-cell">
+                    <div class="hstat-icon navy"><i class="fa-solid fa-list-check"></i></div>
+                    <div>
+                        <div class="hstat-num" id="hstat-total">15</div>
+                        <div class="hstat-lbl">Total Actions</div>
+                        <div class="hstat-sub">All recorded actions</div>
+                    </div>
+                </div>
+                <div class="hstat-cell">
+                    <div class="hstat-icon gold"><i class="fa-solid fa-gavel"></i></div>
+                    <div>
+                        <div class="hstat-num" id="hstat-judicial">—</div>
+                        <div class="hstat-lbl">Judicial Actions</div>
+                        <div class="hstat-sub">Court cases &amp; rulings</div>
+                    </div>
+                </div>
+                <div class="hstat-cell">
+                    <div class="hstat-icon blue"><i class="fa-solid fa-user-tie"></i></div>
+                    <div>
+                        <div class="hstat-num" id="hstat-executive">—</div>
+                        <div class="hstat-lbl">Executive Actions</div>
+                        <div class="hstat-sub">Orders &amp; directives</div>
+                    </div>
+                </div>
+                <div class="hstat-cell">
+                    <div class="hstat-icon green"><i class="fa-solid fa-building-columns"></i></div>
+                    <div>
+                        <div class="hstat-num" id="hstat-other">—</div>
+                        <div class="hstat-lbl">Other Actions</div>
+                        <div class="hstat-sub">Legislative, parliamentary &amp; administrative</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row view-tabs-row">
+              <!-- View tabs -->
+              <div class="view-tabs">
+                  <button class="view-tab active" onclick="setView('timeline',this)"><i class="fa-solid fa-timeline"></i> Timeline View</button>
+                  <!-- <button class="view-tab" onclick="setView('analytics',this)"><i class="fa-solid fa-chart-bar"></i> Statistical Overview</button> -->
+                  <button class="view-tab" onclick="setView('calendar',this)"><i class="fa-regular fa-calendar"></i> Institutional Context</button>
+                  <!-- <button class="view-tab" onclick="setView('map',this)"><i class="fa-solid fa-map-location-dot"></i> Map View</button> -->
+              </div>
+            </div>
+
+
+            <!-- Sort row -->
+            <div class="sort-row">
+                <div class="search-inline" style="position:relative;flex:1;max-width:280px;">
+                    <i class="fa-solid fa-magnifying-glass" style="position:absolute;left:0.75rem;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:0.75rem;"></i>
+                    <input type="text" id="searchInputMain" placeholder="Search timeline…" oninput="syncSearch(this.value)" style="width:100%;padding:0.48rem 0.75rem 0.48rem 2.1rem;border:1.5px solid var(--border);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:0.82rem;background:white;color:var(--text);" />
+                </div>
+                <span class="sort-label">Sort:</span>
+                <select class="sort-select" id="sortSelect" onchange="applyFilters()">
+                    <option value="desc">Newest First</option>
+                    <option value="asc">Oldest First</option>
+                </select>
+                <select class="sort-select" id="groupSelect" style="display:none">
+                    <option value="year">Group: By Year</option>
+                    <option value="none">Group: None</option>
+                </select>
+                <span class="results-badge"  style="display:none" id="resultsCount">15 entries</span>
+            </div>
+            <!-- Category pills -->
+            <div class="cat-pills" id="catPills">
+                <span class="cat-pill all active" onclick="filterCat('all')"><i class="fa-solid fa-layer-group"></i> All Categories</span>
+                <span class="cat-pill judicial" onclick="filterCat('judicial')"><i class="fa-solid fa-landmark"></i> Judicial Actions</span>
+                <span class="cat-pill executive" onclick="filterCat('executive')"><i class="fa-solid fa-user-tie"></i> Executive Actions</span>
+                <span class="cat-pill parliament" onclick="filterCat('parliament')"><i class="fa-solid fa-building-columns"></i> Parliamentary Actions</span>
+                <span class="cat-pill civil" onclick="filterCat('civil')"><i class="fa-solid fa-people-group"></i> Civil Society</span>
+            </div>
+
+            <div class="row">
+                <div class="col-md-8">
+                  <!-- Timeline header -->
+                  <div style="font-size:0.78rem;font-weight:700;color:var(--text);margin-bottom:1rem;letter-spacing:0.01em;">
+                      <i class="fa-solid fa-timeline" style="color:var(--gold-dark);margin-right:0.4rem;"></i>Chronological Timeline
+                  </div>
+                  <!-- Timeline list -->
+                  <div class="timeline" id="timelineList"></div>
+                  <!-- Empty state -->
+                  <div class="empty-state d-none" id="emptyState">
+                      <i class="fa-solid fa-folder-open"></i>
+                      <h5>No entries match your filters</h5>
+                      <p style="font-size:0.84rem;margin-top:0.4rem;">Try adjusting your search or filter criteria.</p>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <!-- ══ RIGHT ANALYTICS PANEL ══ -->
+                  <aside class="analytics-panel">
+                      <div class="analytics-title">Analytics Overview</div>
+                      <div class="analytics-section">
+                          <div class="analytics-section-title">Actions by Type</div>
+                          <div class="donut-wrap">
+                              <svg viewBox="0 0 36 36" id="donutSvg">
+                                  <!-- rendered by JS -->
+                              </svg>
+                              <div class="donut-center">
+                                  <span class="d-num" id="donutTotal">15</span>
+                                  <span class="d-lbl">Total</span>
+                              </div>
+                          </div>
+                          <div class="donut-legend" id="donutLegend"></div>
+                      </div>
+                      <div class="analytics-section">
+                          <div class="analytics-section-title">Actions by Status</div>
+                          <div id="statusBars"></div>
+                      </div>
+                      <div class="analytics-section">
+                          <div class="analytics-section-title">Actions Over Time</div>
+                          <div class="over-time-chart">
+                              <svg class="ot-svg" id="otSvg" viewBox="0 0 260 80" xmlns="http://www.w3.org/2000/svg">
+                                  <!-- rendered by JS -->
+                              </svg>
+                          </div>
+                          <div style="display:flex;justify-content:space-between;font-size:0.62rem;color:var(--text-muted);margin-top:0.35rem;">
+                              <span>2023</span><span>2024</span><span>2025</span><span>2026</span>
+                          </div>
+                      </div>
+                      <div class="analytics-section">
+                          <div class="analytics-section-title">Top Institutions</div>
+                          <div class="top-inst-list" id="topInstitutions"></div>
+                      </div>
+                      <a class="btn-full-analytics" href="#" onclick="return false;">
+                          View Full Analytics <i class="fa-solid fa-arrow-right"></i>
+                      </a>
+                  </aside>
+                </div>
+            </div>
+            <!-- Load more -->
+            <div style="text-align:center;margin-top:1.5rem;" id="loadMoreWrap">
+                <button id="loadMoreBtn" onclick="loadMore()" style="padding:0.65rem 2rem;background:white;border:1.5px solid var(--border);border-radius:50px;font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:600;color:var(--text);cursor:pointer;display:inline-flex;align-items:center;gap:0.5rem;transition:all 0.2s;" onmouseover="this.style.background='var(--navy)';this.style.color='white'" onmouseout="this.style.background='white';this.style.color='var(--text)'">
+                    <i class="fa-solid fa-chevron-down"></i> Load More Actions
+                </button>
+            </div>
+        </main>
+        <!-- ══ FOOTER ══ -->
+        <footer class="app-footer">
+            <div class="footer-brand">
+                <span class="fb-name">Office of the Special Prosecutor</span>
+                <span class="fb-sub">Promoting Integrity. Upholding Accountability.</span>
+            </div>
+            <div>
+                <div class="footer-col-title">Quick Links</div>
+                <ul class="footer-links">
+                    <li><a href="https://osp.gov.gh" target="_blank">About OSP</a></li>
+                    <li><a href="https://osp.gov.gh" target="_blank">Legal Framework</a></li>
+                    <li><a href="https://osp.gov.gh/media_center/impact" target="_blank">Reports &amp; Publications</a></li>
+                    <li><a href="https://osp.gov.gh/contact/" target="_blank">Contact Us</a></li>
+                </ul>
+            </div>
+            <div>
+                <div class="footer-col-title">Resources</div>
+                <ul class="footer-links">
+                    <li><a href="#" onclick="return false;">FAQ</a></li>
+                    <li><a href="#" onclick="return false;">Glossary</a></li>
+                    <li><a href="#" onclick="return false;">Data Policy</a></li>
+                    <li><a href="#" onclick="return false;">Sitemap</a></li>
+                </ul>
+            </div>
+            <div>
+                <div class="footer-col-title">Stay Updated</div>
+                <p style="font-size:0.78rem;color:rgba(255,255,255,0.5);margin-bottom:0.75rem;line-height:1.5;">Get the latest updates on OSP activities and published reports.</p>
+                <div style="display:flex;gap:0.5rem;">
+                    <input type="email" placeholder="Enter your email" style="flex:1;padding:0.55rem 0.75rem;border-radius:8px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.07);color:white;font-family:'DM Sans',sans-serif;font-size:0.78rem;min-width:0;" />
+                    <button style="padding:0.55rem 0.9rem;background:var(--gold);color:var(--navy);border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.78rem;font-weight:700;cursor:pointer;white-space:nowrap;">Subscribe</button>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>© 2026 Office of the Special Prosecutor, Ghana. All rights reserved.</span>
+                <span style="display:flex;gap:1.5rem;">
+                    <a href="#" style="color:rgba(255,255,255,0.35);font-size:0.72rem;text-decoration:none;" onclick="return false;">Privacy Policy</a>
+                    <a href="#" style="color:rgba(255,255,255,0.35);font-size:0.72rem;text-decoration:none;" onclick="return false;">Terms of Use</a>
+                    <a href="#" style="color:rgba(255,255,255,0.35);font-size:0.72rem;text-decoration:none;" onclick="return false;">Accessibility</a>
+                </span>
+            </div>
+        </footer>
+    </div><!-- end app-shell -->
+    <script>
+    /* ══════════════════════════════════════════════
+   DATA
+══════════════════════════════════════════════ */
+    const cases = [{
+            id: 1,
+            caseId: "Case 1",
+            sortKey: 15,
+            name: "Kenneth Kwabena Agyei Kuranchie v. Attorney-General & OSP (1st Filing)",
+            dateFiled: "2023-09-01",
+            dateDisplay: "September 2023",
+            year: "2023",
+            petitioner: "Kenneth K.A. Kuranchie",
+            type: "Supreme Court",
+            category: "judicial",
+            nature: "The constitutional challenge brought by Kenneth Kwabena Agyei Kuranchie against Act 959 questioned the legality of the Office of the Special Prosecutor's creation and independence. The Plaintiff argued that the Act violated provisions of the 1992 Constitution by conferring independent prosecutorial authority and police-like powers on the OSP outside the direct control of the Attorney-General, and sought to have the Office placed under the Attorney-General's authority. The matter, however, did not proceed to substantive hearing. The Plaintiff failed to file a statement of case for a period of 9 months following the initiation of the suit. Subsequently, in June 2024, the Plaintiff filed a notice of discontinuance, effectively bringing the proceedings to an end without judicial determination on the merits of the constitutional issues raised.",
+            whyMatters: "This was the first formal constitutional challenge to the OSP's independent prosecutorial powers. Although it was ultimately discontinued without a judicial ruling, it established a litigation pattern that would be repeated and escalated in subsequent filings.",
+            outcome: "Withdrawn",
+            outcomeClass: "withdrawn",
+            outcomeDetail: "Plaintiff filed notice of discontinuance in June 2024 after failing to file statement of case for 9 months.",
+            sources: [{ label: "Citi Newsroom — Supreme Court Strikes Out Kuranchie Suit", url: "https://www.citinewsroom.com/2024/07/supreme-court-strikes-out-ken-kuranchies-suit-against-osp/" }],
+            notable: ["Cecilia Abena Dapaah"],
+            priority: "low"
+        },
+        {
+            id: 2,
+            caseId: "Case 2",
+            sortKey: 14,
+            name: "First Petition for the Removal of the Special Prosecutor",
+            dateFiled: "2024-04-30",
+            dateDisplay: "April 2024",
+            year: "2024",
+            petitioner: "Martin Amidu",
+            type: "Executive",
+            category: "executive",
+            nature: "A petition seeking the removal of the Special Prosecutor, Kissi Agyebeng, was received by Nana Akufo-Addo on 30 April 2024. The petition alleged, among other things, procurement breaches, abuse of authority, and violations of citizens' rights. In accordance with the constitutional procedure, the President, on 6 May 2024, referred the petition to the Chief Justice, Her Ladyship Gertrude Torkornoo, for a prima facie determination. Upon review, the Chief Justice, on 2 July 2024, concluded that no prima facie case had been established to warrant the constitution of a committee of inquiry. The petition was accordingly dismissed, bringing the removal process to an end at the threshold stage.",
+            whyMatters: "This petition invoked the constitutional removal mechanism under the OSP Act for the first time. Its dismissal at the prima facie stage confirmed the threshold protection available to the Special Prosecutor against politically motivated removal attempts.",
+            outcome: "Dismissed",
+            outcomeClass: "dismissed",
+            outcomeDetail: "30 April 2024: Grounds for removal cited inter alia procurement breaches, abuse of authority and abuse of citizen rights.\n\n6 May 2024: The petition was forwarded to the Chief Justice, Her Ladyship Gertrude Torkornoo.\n\n2 July 2024: The Chief Justice determined that no prima facie evidence had been established to justify proceeding with the petition for the removal of the Special Prosecutor.",
+            sources: [{ label: "GhanaWeb — Chief Justice Dismisses Petition", url: "https://www.ghanaweb.com/GhanaHomePage/television/news/Chief-Justice-dismisses-Martin-Amidu-s-petition-to-remove-Special-Prosecutor-128471" }],
+            notable: ["Cecilia Abena Dapaah's case"],
+            priority: "low"
+        },
+        {
+            id: 3,
+            caseId: "Case 3",
+            sortKey: 13,
+            name: "Kenneth Kwabena Agyei Kuranchie v. Attorney-General & OSP (2nd Filing)",
+            dateFiled: "2024-07-05",
+            dateDisplay: "July 2024",
+            year: "2024",
+            petitioner: "Kenneth K.A. Kuranchie",
+            type: "Supreme Court",
+            category: "judicial",
+            nature: "Following the discontinuance of the initial action, Kenneth Kwabena Agyei Kuranchie refiled a fresh suit against the Attorney-General and the Office of the Special Prosecutor, seeking the same constitutional reliefs and reiterating his challenge to the legality of the OSP's independent prosecutorial mandate. Upon consideration, a seven-member panel of the Supreme Court, presided over by the Chief Justice, Her Ladyship Gertrude Torkornoo, reviewed the procedural history of the matter, including the prior notice of discontinuance. The Court determined that the refiled action constituted an abuse of process. Accordingly, the Court struck out the writ without liberty to reapply, effectively bringing the renewed challenge to an end. In its remarks, the Court emphasised that the Office of the Special Prosecutor should not be burdened by repetitive litigation and must be allowed to carry out its statutory mandate without undue obstruction.",
+            whyMatters: "The Court's strike-out without liberty to reapply, combined with its expressed concern about litigation designed to burden the OSP, marked a significant judicial endorsement of the OSP's right to operate free from repetitive constitutional harassment.",
+            outcome: "Struck Out",
+            outcomeClass: "struck",
+            outcomeDetail: "After reviewing the notice of discontinuance, the 7-member panel presided over by Chief Justice G.S. Torkornoo struck out the writ without liberty to reapply, rendering the re-filed case moot. The Court further stated that the OSP should not be encumbered by such lawsuits and must be allowed to fulfil its mandate.",
+            sources: [{ label: "MyJoyOnline — Ken Kuranchie Drags Special Prosecutor to Supreme Court", url: "https://www.myjoyonline.com/ken-kuranchie-drags-special-prosecutor-to-supreme-court/" }],
+            notable: ["Cecilia Abena Dapaah"],
+            priority: "low"
+        },
+        {
+            id: 4,
+            caseId: "Case 4",
+            sortKey: 12,
+            name: "Second Petition for the Removal of the Special Prosecutor",
+            dateFiled: "2024-11-18",
+            dateDisplay: "November 2024",
+            year: "2024",
+            petitioner: "Kenneth K.A. Kuranchie",
+            type: "Executive",
+            category: "executive",
+            nature: "A second petition seeking the removal of the Special Prosecutor, Kissi Agyebeng, was submitted to Nana Akufo-Addo on 18 November 2024. The petition, filed by Kenneth Kwabena Agyei Kuranchie, alleged breaches of the Oath of Office and the Oath of Secrecy, citing alleged administration of polygraph tests on OSP officers by the FBI of the U.S. By correspondence dated 1 December 2024, the President informed the petitioner that the matter had been referred to the Chief Justice for review. No official public determination was subsequently reported; however, consistent with the constitutional process, the absence of any further action suggests that the petition did not meet the threshold for the establishment of a prima facie case and was accordingly not advanced beyond the preliminary stage.",
+            whyMatters: "Notably filed by the same petitioner as the struck-out Supreme Court suit, this petition demonstrates a strategy of pursuing multiple concurrent fronts — judicial and executive — against the OSP's leadership simultaneously.",
+            outcome: "Dismissed",
+            outcomeClass: "dismissed",
+            outcomeDetail: "18 November 2024: Petition alleged breaches of the Oath of Office and the Oath of Secrecy by working with the FBI and conducting polygraph tests on OSP staff.\n\n1 December 2024: The President responded, informing Mr. Kuranchie that the petition had been referred to the Chief Justice for consideration.\n\nThere was no public reporting on the subsequent dismissal of the petition.",
+            sources: [{ label: "MyJoyOnline — Kuranchie Petitions Akufo-Addo", url: "https://www.myjoyonline.com/ken-kuranchie-petitions-akufo-addo-for-removal-of-special-prosecutor-citing-misconduct-and-security-risks/" }],
+            notable: ["Cecilia Abena Dapaah"],
+            priority: "low"
+        },
+        {
+            id: 5,
+            caseId: "Case 5",
+            sortKey: 11,
+            name: "Kuranchie Review Application",
+            dateFiled: "2024-12-01",
+            dateDisplay: "December 2024",
+            year: "2024",
+            petitioner: "Kenneth K.A. Kuranchie",
+            type: "Supreme Court",
+            category: "judicial",
+            nature: "An application was filed seeking a review of an earlier Supreme Court decision which had barred the applicant from reapplying, and which he sought to overturn in order to reinstate his capacity to challenge the constitutionality of the Office of the Special Prosecutor. The matter was heard by the full bench of the Supreme Court, with arguments presented by all parties. By a unanimous decision delivered on 11 December 2024, the Court dismissed the review application in its entirety. The Court held that the applicant's conduct — particularly his failure to file and subsequent discontinuance of earlier proceedings — amounted to a 'blatant abuse' of the court's process. The decision effectively affirmed the earlier strike-out order and maintained the restriction on further litigation in respect of the matter.",
+            whyMatters: "The full bench's unanimous dismissal and characterisation of the conduct as a 'blatant abuse of process' set a firm judicial precedent against using the courts as a tool of institutional harassment against the OSP.",
+            outcome: "Dismissed",
+            outcomeClass: "dismissed",
+            outcomeDetail: "11 December 2024: After hearing arguments from all parties, the full bench of the Supreme Court unanimously dismissed the review application. The Court ruled the applicant's conduct — failing to file, then discontinuing — constituted a 'blatant abuse' of court process. Barred from further action.",
+            sources: [{ label: "MyJoyOnline — Why the Supreme Court Barred Kuranchie from Refiling", url: "https://www.myjoyonline.com/why-the-supreme-court-barred-ken-kuranchie-from-refiling-his-case-against-osps-constitutionality/" }],
+            notable: ["Cecilia Abena Dapaah"],
+            priority: "low"
+        },
+        {
+            id: 6,
+            caseId: "Case 6",
+            sortKey: 10,
+            name: "Third Petition for the Removal of the Special Prosecutor",
+            dateFiled: "2025-10-01",
+            dateDisplay: "October 2025",
+            year: "2025",
+            petitioner: "Coalition for Integrity in Governance (Simon Yaw Awadzi, Executive Chairman)",
+            type: "Executive",
+            category: "executive",
+            nature: "A petition seeking the removal of the Special Prosecutor was received by President Mahama. The petition dated 1 December 2025, alleged grounds including financial mismanagement, incompetence, the withholding of dockets from the Attorney-General, and undue delay in the extradition processes relating to Ken Ofori-Atta. By a letter dated 26 January 2026, and communicated to the public on 18 February 2026, the Chief Justice informed the President that no prima facie case had been established against the Special Prosecutor upon consideration of the petition.",
+            whyMatters: "This petition, filed at the beginning of the new administration, signalled an early attempt by external groups to use the removal mechanism to weaken the OSP's ongoing high-profile investigations, notably the SML matter and the Ofori-Atta proceedings.",
+            outcome: "Dismissed",
+            outcomeClass: "dismissed",
+            outcomeDetail: "1 December 2025: Grounds of petition cited alleged financial mismanagement, incompetence, withholding dockets from AG, and delaying Ken Ofori-Atta extradition.\n\n18 February 2026: The public was informed through a letter dated 26 January 2026 that the Chief Justice informed the President there was no prima facie case established against the Special Prosecutor, effectively dismissing the petition.",
+            sources: [{ label: "3News — Remove Kissi Agyebeng — COFIIG Petitions Mahama", url: "https://www.3news.com/news/remove-kissi-agyebeng-as-special-prosecutor-executive-chairman-of-coalition-for-integrity-in-governance-petitions-mahama" }],
+            notable: ["Kenneth Nana Yaw Ofori Atta", "SML investigations"],
+            priority: "low"
+        },
+        {
+            id: 7,
+            caseId: "Case 7",
+            sortKey: 9,
+            name: "Fourth Petition for the Removal of the Special Prosecutor",
+            dateFiled: "2025-11-01",
+            dateDisplay: "November 2025",
+            year: "2025",
+            petitioner: "Apostle Abraham Lincoln Larbi",
+            type: "Executive",
+            category: "executive",
+            nature: "Another petition was submitted on 1 December 2025, raising allegations substantially similar to those contained in an earlier petition, including claims previously advanced against the Special Prosecutor. By a letter dated 26 January 2026, and communicated to the public on 18 February 2026, the Chief Justice informed the President that no prima facie case had been established against the Special Prosecutor upon consideration of the allegations.",
+            whyMatters: "The submission of multiple near-identical petitions within the same period reflects a coordinated effort to overwhelm the removal review mechanism and create sustained public pressure against the OSP's leadership.",
+            outcome: "Dismissed",
+            outcomeClass: "dismissed",
+            outcomeDetail: "1 December 2025: Similar grounds of allegation as the Third Petition.\n\n18 February 2026: The public was informed through a letter dated 26 January 2026 that the Chief Justice informed the President there was no prima facie case established against the Special Prosecutor, effectively dismissing the petition.",
+            sources: [{ label: "Citi Newsroom — Details of Petition Against Special Prosecutor", url: "https://www.citinewsroom.com/2025/12/mismanagement-conflict-of-interest-details-of-petition-against-special-prosecutor/" }],
+            notable: ["Kenneth Nana Yaw Ofori Atta", "SML investigations"],
+            priority: "low"
+        },
+        {
+            id: 8,
+            caseId: "Case 8",
+            sortKey: 8,
+            name: "Fifth Petition for the Removal of the Special Prosecutor",
+            dateFiled: "2025-12-01",
+            dateDisplay: "December 2025",
+            year: "2025",
+            petitioner: "Undisclosed Petitioner",
+            type: "Executive",
+            category: "executive",
+            nature: "A petition dated 1 December 2025 was submitted, this time focusing on the Strategic Mobilisation Limited (SML) matter. The petitioner alleged that the Special Prosecutor had permitted Ken Ofori-Atta to leave the jurisdiction, failed to exercise available police powers to secure his arrest, and had made inaccurate representations regarding the extent of cooperation sought from security agencies. The matter was referred for consideration by the Chief Justice. By a letter dated 26 January 2026, and communicated to the public on 18 February 2026, the Chief Justice informed the President that no prima facie case had been established against the Special Prosecutor.",
+            whyMatters: "The allegations in this petition directly targeted the OSP's handling of one of Ghana's most prominent corruption investigations, reflecting an attempt to use the removal mechanism to interfere with an active prosecution.",
+            outcome: "Dismissed",
+            outcomeClass: "dismissed",
+            outcomeDetail: "1 December 2025: The petitioner accused the Special Prosecutor of allowing Ken Ofori-Atta to flee; failing to use police powers for arrest; and making inaccurate representations regarding the extent of cooperation sought from security agencies.\n\n18 February 2026: The public was informed through a letter dated 26 January 2026 that the Chief Justice found no prima facie case established against the Special Prosecutor, effectively dismissing the application.",
+            sources: [{ label: "Citi Newsroom — Details of Petition Against Special Prosecutor", url: "https://www.citinewsroom.com/2025/12/mismanagement-conflict-of-interest-details-of-petition-against-special-prosecutor/" }],
+            notable: ["Kenneth Nana Yaw Ofori Atta", "SML investigations"],
+            priority: "low"
+        },
+        {
+            id: 9,
+            caseId: "Case 9",
+            sortKey: 7,
+            name: "Sixth Petition for the Removal of the Special Prosecutor",
+            dateFiled: "2025-12-15",
+            dateDisplay: "December 2025",
+            year: "2025",
+            petitioner: "Martin Kpebu",
+            type: "Executive",
+            category: "executive",
+            nature: "The petition, formally submitted in December 2025, alleged incompetence, including the alleged failure to prevent Ken Ofori-Atta from leaving the country. It further cited abuse of office and alleged misrepresentation in relation to assertions that assistance had been sought from security agencies to prevent the said travel. By February 2026, the petitioner publicly indicated that his petition remained pending and had not yet been determined. The matter thereafter remained subject to the established procedural framework for consideration of petitions for the removal of the Special Prosecutor.",
+            whyMatters: "The public acknowledgement by the petitioner that the petition had not been determined — long after the statutory period elapsed — raises procedural concerns about the administration of the removal process and the OSP's right to timely resolution of such matters.",
+            outcome: "Status Unknown",
+            outcomeClass: "unknown",
+            outcomeDetail: "November 2025: Martin Kpebu publicly announced he was preparing a petition to remove the Special Prosecutor.\n\nDecember 2025: The petition alleges incompetence, including failure to prevent Ken Ofori-Atta from leaving the country, as well as abuse of office and misrepresentation in relation to assertions that assistance had been sought from security agencies to prevent the said travel.\n\nFebruary 2026: Kpebu publicly indicated that his petition had still not been determined. The time stipulated under the OSP Act for determination has elapsed.",
+            sources: [{ label: "Modern Ghana — TV3 Coverage", url: "https://www.modernghana.com/videonews/tv3/7/615760/" }],
+            notable: ["Arrest of Martin Kpebu"],
+            priority: "medium"
+        },
+        {
+            id: 10,
+            caseId: "Case 10",
+            sortKey: 6,
+            name: "Noah Ephraem Tetteh Adamtey v. Attorney-General",
+            dateFiled: "2025-12-08",
+            dateDisplay: "December 2025 – Present",
+            year: "2025",
+            petitioner: "Noah Ephraem Tetteh Adamtey",
+            type: "Supreme Court",
+            category: "judicial",
+            nature: "The Plaintiff invoked the Supreme Court's exclusive original jurisdiction, challenging the constitutionality of key provisions of the Office of the Special Prosecutor Act, 2017 (Act 959). The action sought, inter alia, a declaration that sections 3(3), 4, and 33 of Act 959 are unconstitutional, on the basis that they allegedly permit the Office of the Special Prosecutor to initiate and conduct prosecutions independently without the prior authorisation of the Attorney-General. On 15 December 2025, the Office of the Special Prosecutor filed a motion on notice seeking joinder to be added as a party to the proceedings. The Plaintiff subsequently filed an affidavit in opposition to the application for joinder, contesting the necessity of the Office's participation in the suit. By a ruling delivered on 27 January 2026, the Supreme Court refused the Office of the Special Prosecutor's application for joinder, holding that the Office was not a necessary party to the proceedings. On 8 April 2026, the Attorney-General filed an application for extension of time within which to file its statement of case. The Court, by its order of 16 April 2026, granted the Attorney-General seven (7) days within which to file the statement of case. On 22 April 2026, twelve (12) civil society organisations announced their intention to seek leave of the Court to file an amicus curiae brief in support of the constitutionality of the Special Prosecutor's independent prosecutorial powers.",
+            whyMatters: "This is the most consequential current legal challenge to the OSP. A ruling in favour of the Plaintiff would effectively render the OSP's entire prosecutorial record since 2018 constitutionally questionable and would fundamentally restructure the institution's mandate — an outcome with far-reaching implications for Ghana's anti-corruption architecture.",
+            outcome: "Ongoing",
+            outcomeClass: "ongoing",
+            outcomeDetail: "15 December 2025: The OSP filed a motion on notice for joinder to be a party to the suit. The Plaintiff filed an affidavit in opposition to the motion for joinder.\n\n27 January 2026: Supreme Court refused OSP's application to join as party, holding OSP is not a necessary party.\n\n8 April 2026: AG filed for extension of time to file statement of case.\n\n16 April 2026: The Court granted the AG 7 days to file the statement of case.\n\n22 April 2026: 12 Civil Society Organisations announced their intention to file an amicus curiae brief to support the constitutionality of the OSP's independent prosecutorial powers.",
+            sources: [
+                { label: "3News — Supreme Court Refuses OSP's Bid to Join Suit", url: "https://www.3news.com/news/supreme-court-refuses-office-of-special-prosecutors-bid-to-join-suit-challenging-its-legality" },
+                { label: "Graphic.com.gh — AG Supports Suit Challenging Power of OSP", url: "https://www.graphic.com.gh/news/general-news/ghana-news-a-g-supports-suit-challenging-power-of-osp-to-prosecute.html" },
+                { label: "MyJoyOnline — 12 CSOs Seek to Join Supreme Court OSP Case", url: "https://www.myjoyonline.com/12-csos-seek-to-join-supreme-court-osp-case-as-amicus-curiae/" }
+            ],
+            notable: ["Import/refinery/distribution/sale of Petroleum Products (2026)", "Diversion of Palm Oil in-transit investigations (2026)", "Nana Yaw Duodu aka Dr. Sledge / MIIF funds", "Kenneth Nana Yaw Ofori-Atta Trial"],
+            priority: "high"
+        },
+        {
+            id: 11,
+            caseId: "Case 11",
+            sortKey: 5,
+            name: "Private Member's Bill to Repeal the OSP Act (Act 959)",
+            dateFiled: "2025-12-08",
+            dateDisplay: "December 2025",
+            year: "2025",
+            petitioner: "Mahama Ayariga (Majority Leader) & Rockson Dafeamekpor (Majority Chief Whip)",
+            type: "Parliamentary",
+            category: "parliament",
+            nature: "On 6 December 2025, the Speaker of Parliament, Alban Bagbin, together with a supermajority of Members of Parliament, reportedly reached a consensus in principle recommending the abolition of the Office of the Special Prosecutor. The position was framed within broader discussions on institutional reform and rationalisation of anti-corruption architecture within the State. On 8 December 2025, the Majority Leader and the Majority Chief Whip introduced a bill to repeal the Office of the Special Prosecutor Act, 2017 (Act 959), with the aim of dissolving the Office. However, on 11 December 2025, President John Mahama requested the withdrawal of the bill, describing it as premature.",
+            whyMatters: "This represents the most direct legislative threat to the OSP's existence since its establishment — an attempt by a parliamentary supermajority to dissolve the institution through repeal. The President's intervention to request withdrawal is constitutionally significant and indicates executive resistance to the legislative move.",
+            outcome: "Withdrawn",
+            outcomeClass: "withdrawn",
+            outcomeDetail: "6 December 2025: The Speaker of Parliament, Alban Bagbin, together with Members of Parliament (super majority), unanimously agreed to recommend the abolition of the OSP.\n\n8 December 2025: The Majority Leader and Majority Chief Whip introduced the bill to repeal Act 959 with the aim of dissolving the Office.\n\n11 December 2025: President John Mahama requested the withdrawal of the bill, describing it as premature.",
+            sources: [
+                { label: "Citi Newsroom — Ayariga, Dafeamekpor to File Bill to Scrap OSP", url: "https://www.citinewsroom.com/2025/12/ayariga-dafeamekpor-to-file-bill-to-scrap-osp/" },
+                { label: "GhanaWeb — OSP Repeal Bill Put on Hold", url: "https://www.ghanaweb.com/GhanaHomePage/NewsArchive/OSP-Repeal-Bill-put-on-hold-as-Majority-responds-to-President-Mahama-s-request-2013512" }
+            ],
+            notable: ["Arrest of Martin Kpebu"],
+            priority: "high"
+        },
+        {
+            id: 12,
+            caseId: "Case 12",
+            sortKey: 4,
+            name: "Peter Archibald Hyde v. OSP",
+            dateFiled: "2026-01-30",
+            dateDisplay: "January 2026",
+            year: "2026",
+            petitioner: "Peter Archibald Hyde (defendant in The Republic v. Issah Seidu & 3 Ors — the Rice Scandal case)",
+            type: "High Court",
+            category: "judicial",
+            nature: "On 30 January 2026, Peter Archibald Hyde, a defendant in the Rice Scandal case, filed an action at the Accra High Court challenging the constitutional basis of the OSP's prosecutorial powers under Article 88 of the 1992 Constitution. After statements of case were filed in February–March 2026, the OSP raised a preliminary objection citing lack of jurisdiction and the pendency of the Adamtey case at the Supreme Court. On 9 March 2026, the Judge stayed proceedings. However, on 15 April 2026, the Judge reversed the stay, ruled that the OSP lacks prosecutorial powers without authorisation from the Attorney-General, set aside previous convictions secured by the OSP, and ordered all pending cases to be transferred to the AG's Department. On the same day, the OSP stated that it is taking steps to quickly overturn the decision, noting that the High Court does not have jurisdiction to, in effect, strike down parts of an Act of Parliament as unconstitutional. On 16 April 2026, the Deputy AG, Justice Srem-Sai, announced the readiness of the AG to take over OSP cases.",
+            whyMatters: "This High Court ruling — if not overturned — would have the practical effect of nullifying all OSP-secured convictions and suspending all ongoing prosecutions. It represents the most operationally damaging single ruling against the OSP to date, and raises fundamental separation of powers concerns about a subordinate court purporting to strike down statutory provisions.",
+            outcome: "Ruling Against OSP",
+            outcomeClass: "upheld",
+            outcomeDetail: "February–March 2026: Parties file statements of case. OSP raises a preliminary objection — lack of jurisdiction and existence of a pending Supreme Court case.\n\n9 March 2026: Judge stays proceedings, pending the Supreme Court's determination.\n\n8 April 2026: Applicant prepared and filed his own hearing notice.\n\n9 April 2026: Registrar issued the applicant-prepared hearing notice unchanged.\n\n14 April 2026: Hearing notice served on OSP for 8:00 a.m.\n\n15 April 2026: Judge delivered ruling reversing the stay. The Judge pronounced that the OSP lacks prosecutorial powers and has not been mandated by the AG to prosecute, reversing all previous convictions and ordering all OSP-initiated cases transferred to the AG's Department.\n\n16 April 2026: The Deputy AG, Justice Srem-Sai, announced the readiness of the AG to take over OSP cases.",
+            sources: [{ label: "GhanaWeb — Court Rules OSP Lacks Authority to Prosecute Cases", url: "https://www.ghanaweb.com/GhanaHomePage/NewsArchive/Court-rules-OSP-lacks-authority-to-prosecute-cases-2030187" }],
+            notable: ["Rice Scandal case — The Republic v. Issah Seidu & 3 Ors"],
+            priority: "high"
+        },
+        {
+            id: 13,
+            caseId: "Case 13",
+            sortKey: 3,
+            name: "Stay of Execution and Notice of Appeal — High Court Quo Warranto Ruling",
+            dateFiled: "2026-04-20",
+            dateDisplay: "April 2026",
+            year: "2026",
+            petitioner: "Office of the Special Prosecutor (Appellant)",
+            type: "High Court",
+            category: "judicial",
+            nature: "On 20 April 2026, the OSP filed a Stay of Execution and Notice of Appeal at the High Court on the Court's quo warranto ruling in The Republic v Issah Seidu & 3 Ors, in which the High Court had ruled that the OSP had no mandate to undertake prosecution. The application is scheduled to be heard before the General Jurisdiction Division of the High Court.",
+            whyMatters: "The OSP's appeal directly contests the High Court's competence to strike down provisions of an Act of Parliament and seeks to preserve its operational mandate pending the Supreme Court's definitive ruling in the Adamtey case. The outcome will determine whether ongoing OSP prosecutions can continue.",
+            outcome: "Ongoing",
+            outcomeClass: "ongoing",
+            outcomeDetail: "20 April 2026: The OSP filed a Stay of Execution and Notice of Appeal at the High Court on the Court's quo warranto ruling in The Republic v Issah Seidu & 3 Ors.\n\n21 May 2026: The hearing of the Stay of Execution application is scheduled before the General Jurisdiction Division of the High Court.",
+            sources: [],
+            notable: ["Rice Scandal case — The Republic v. Issah Seidu & 3 Ors"],
+            priority: "high"
+        },
+        {
+            id: 14,
+            caseId: "Case 14",
+            sortKey: 2,
+            name: "Certiorari Application at the Supreme Court to Quash Quo Warranto High Court Ruling",
+            dateFiled: "2026-05-06",
+            dateDisplay: "May 2026",
+            year: "2026",
+            petitioner: "Office of the Special Prosecutor (Applicant)",
+            type: "Supreme Court",
+            category: "judicial",
+            nature: "On 6 May 2026, the OSP filed a certiorari application at the Supreme Court to quash the High Court quo warranto ruling in The Republic v Issah Seidu & 3 Ors. The application invokes the supervisory jurisdiction of the Supreme Court over subordinate courts and contests the High Court's competence to, in effect, declare provisions of an Act of Parliament unconstitutional.",
+            whyMatters: "A successful certiorari application would quash the High Court's ruling entirely, restoring the OSP's prosecutorial standing and reinforcing the constitutional principle that only the Supreme Court can declare statutory provisions unconstitutional. This application is the OSP's primary vehicle for challenging the High Court ruling in the superior court.",
+            outcome: "Ongoing",
+            outcomeClass: "ongoing",
+            outcomeDetail: "6 May 2026: The OSP filed a certiorari application at the Supreme Court to quash the High Court quo warranto ruling in The Republic v Issah Seidu & 3 Ors.",
+            sources: [],
+            notable: ["The Republic v. Issah Seidu & 3 Ors"],
+            priority: "high"
+        },
+        {
+            id: 15,
+            caseId: "Case 15",
+            sortKey: 1,
+            name: "Application for Leave to File Amicus Curiae Brief by 14 CSOs",
+            dateFiled: "2026-05-06",
+            dateDisplay: "May 2026",
+            year: "2026",
+            petitioner: "Coalition of 14 Civil Society Organizations (incl. CDD-Ghana, Ghana Anti-Corruption Coalition, Transparency International Ghana)",
+            type: "Supreme Court",
+            category: "civil",
+            nature: "On 6 May 2026, a coalition of fourteen civil society organizations, including the Centre for Democratic Development (CDD-Ghana), Ghana Anti-Corruption Coalition and Transparency International Ghana, filed an application at the Supreme Court seeking leave to be joined as Amici Curiae in the case of Noah Ephraem Tetteh Adamtey v. Attorney-General. The brief supports the constitutionality of the Office of the Special Prosecutor's independent prosecutorial powers under Act 959. This follows their earlier public announcement on 22 April 2026 of their intention to file the amicus curiae brief.",
+            whyMatters: "The intervention of fourteen civil society organisations as amici curiae signals broad public interest in the outcome of the Adamtey case and provides an important counterweight to the plaintiff's challenge, placing the constitutional question firmly within the domain of public accountability and democratic governance.",
+            outcome: "Ongoing",
+            outcomeClass: "ongoing",
+            outcomeDetail: "22 April 2026: Public announcement of the CSOs' intention to file an amicus curiae brief in the ongoing Adamtey v. Attorney-General case, in support of the constitutionality of the OSP's independent prosecutorial powers.\n\n6 May 2026: The coalition of fourteen civil society organisations filed an application at the Supreme Court seeking leave to be joined as Amici Curiae in the case of Noah Ephraem Tetteh Adamtey v. Attorney-General (J1/3/2026).",
+            sources: [{ label: "MyJoyOnline — 12 CSOs Seek to Join Supreme Court OSP Case", url: "https://www.myjoyonline.com/12-csos-seek-to-join-supreme-court-osp-case-as-amicus-curiae/" }],
+            notable: ["Noah Ephraem Tetteh Adamtey v. Attorney-General"],
+            priority: "high"
+        }
+    ];
+
+    /* ══════════════════════════════════════════════
+       STATE
+    ══════════════════════════════════════════════ */
+    let activeCat = "all";
+    let visibleCount = 8;
+    let currentFiltered = [...cases];
+
+    const statusIcon = {
+        ongoing: "fa-hourglass-half",
+        dismissed: "fa-ban",
+        withdrawn: "fa-rotate-left",
+        struck: "fa-gavel",
+        upheld: "fa-circle-exclamation",
+        unknown: "fa-circle-question"
+    };
+    const typeIcon = {
+        "Supreme Court": "fa-landmark",
+        "High Court": "fa-scale-balanced",
+        "Executive": "fa-user-tie",
+        "Parliamentary": "fa-building-columns"
+    };
+    const catLabel = {
+        judicial: "Judicial Action",
+        executive: "Executive Petition",
+        parliament: "Parliamentary Action",
+        civil: "Civil Society Intervention"
+    };
+    const catIcon = {
+        judicial: "fa-landmark",
+        executive: "fa-user-tie",
+        parliament: "fa-building-columns",
+        civil: "fa-people-group"
+    };
+
+    /* ══ SIDEBAR FILTER BUILDERS ══ */
+    function buildSidebarFilters() {
+        const types = [
+            { id: "judicial", label: "Judicial Actions", color: "var(--c-judicial)" },
+            { id: "executive", label: "Executive Actions", color: "var(--c-executive)" },
+            { id: "parliament", label: "Parliamentary Actions", color: "var(--c-parliament)" },
+            { id: "civil", label: "Civil Society", color: "var(--c-civil)" }
+        ];
+        const typeCounts = {};
+        types.forEach(t => typeCounts[t.id] = cases.filter(c => c.category === t.id).length);
+        document.getElementById("typeFilters").innerHTML = types.map(t => `
+    <label class="filter-item checked" id="type-filter-${t.id}" onclick="toggleTypeFilter('${t.id}',this)">
+      <input type="checkbox" checked>
+      <span class="filter-dot" style="color:${t.color}"></span>
+      ${t.label}
+      <span class="filter-count">${typeCounts[t.id]}</span>
+    </label>
+  `).join("");
+
+        const statuses = [
+            { id: "ongoing", label: "Ongoing", color: "var(--s-ongoing)" },
+            { id: "dismissed", label: "Dismissed", color: "var(--s-dismissed)" },
+            { id: "struck", label: "Struck Out", color: "var(--s-struck)" },
+            { id: "withdrawn", label: "Withdrawn", color: "var(--s-withdrawn)" },
+            { id: "upheld", label: "Ruling Against", color: "var(--s-upheld)" },
+            { id: "unknown", label: "Unknown", color: "var(--s-unknown)" }
+        ];
+        const sCounts = {};
+        statuses.forEach(s => sCounts[s.id] = cases.filter(c => c.outcomeClass === s.id).length);
+        document.getElementById("statusFilters").innerHTML = statuses.map(s => `
+    <label class="filter-item" id="status-filter-${s.id}" onclick="return false;">
+      <input type="checkbox">
+      <span class="filter-dot" style="color:${s.color}"></span>
+      ${s.label}
+      <span class="filter-count">${sCounts[s.id]}</span>
+    </label>
+  `).join("");
+    }
+
+    let activeTypes = new Set(["judicial", "executive", "parliament", "civil"]);
+
+    function toggleTypeFilter(type, el) {
+        if (activeTypes.has(type)) {
+            if (activeTypes.size === 1) return;
+            activeTypes.delete(type);
+            el.classList.remove("checked");
+        } else {
+            activeTypes.add(type);
+            el.classList.add("checked");
+        }
+        applyFilters();
+    }
+
+    /* ══ APPLY FILTERS ══ */
+    function applyFilters() {
+        const q = (document.getElementById("searchInput").value || "").toLowerCase();
+        const qm = (document.getElementById("searchInputMain").value || "").toLowerCase();
+        const query = q || qm;
+        const yr = document.getElementById("yearFilter").value;
+        const inst = document.getElementById("institutionFilter").value;
+        const jur = document.getElementById("jurisdictionFilter").value;
+        const pri = document.getElementById("priorityFilter").value;
+        const sort = document.getElementById("sortSelect").value;
+
+        let filtered = cases.filter(c => {
+            const matchQ = !query || [c.name, c.petitioner, c.outcome, c.nature, c.outcomeDetail, c.whyMatters, ...c.notable].join(" ").toLowerCase().includes(query);
+            const matchCat = activeCat === "all" || c.category === activeCat;
+            const matchType = activeTypes.has(c.category);
+            const matchYr = !yr || c.year === yr;
+            const matchInst = !inst || c.type === inst;
+            const matchJur = !jur || c.type === jur;
+            const matchPri = !pri || c.priority === pri;
+            return matchQ && matchCat && matchType && matchYr && matchInst && matchJur && matchPri;
+        });
+
+        filtered.sort((a, b) => sort === "desc" ? a.sortKey - b.sortKey : b.sortKey - a.sortKey);
+        currentFiltered = filtered;
+        visibleCount = 8;
+        renderTimeline();
+    }
+
+    function syncSearch(val) {
+        document.getElementById("searchInput").value = val;
+        applyFilters();
+    }
+
+    function clearFilters() {
+        document.getElementById("searchInput").value = "";
+        document.getElementById("searchInputMain").value = "";
+        document.getElementById("yearFilter").value = "";
+        document.getElementById("institutionFilter").value = "";
+        document.getElementById("jurisdictionFilter").value = "";
+        document.getElementById("priorityFilter").value = "";
+        activeTypes = new Set(["judicial", "executive", "parliament", "civil"]);
+        document.querySelectorAll(".filter-item[id^='type-filter']").forEach(el => el.classList.add("checked"));
+        filterCat("all");
+    }
+
+    function filterCat(cat) {
+        activeCat = cat;
+        document.querySelectorAll(".cat-pill").forEach(p => {
+            p.classList.toggle("active", p.getAttribute("onclick").includes(`'${cat}'`));
+        });
+        applyFilters();
+    }
+
+    /* ══ RENDER TIMELINE ══ */
+    function renderTimeline() {
+        const container = document.getElementById("timelineList");
+        const empty = document.getElementById("emptyState");
+        const loadWrap = document.getElementById("loadMoreWrap");
+        const total = currentFiltered.length;
+        const slice = currentFiltered.slice(0, visibleCount);
+
+        document.getElementById("resultsCount").textContent = `${total} entr${total!==1?"ies":"y"}`;
+
+        if (!total) {
+            container.innerHTML = "";
+            empty.classList.remove("d-none");
+            loadWrap.style.display = "none";
+            return;
+        }
+        empty.classList.add("d-none");
+
+        const boldDates = txt => txt.replace(
+            /(\b(?:\d{1,2}\s+)?(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{4}\b|\b\d{1,2}\s+(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{4}\b)/g,
+            '<strong>$1</strong>'
+        );
+
+        const groupByYear = document.getElementById("groupSelect").value === "year";
+
+        if (groupByYear) {
+            const years = [...new Set(slice.map(c => c.year))];
+            let html = "";
+            years.forEach(yr => {
+                const group = slice.filter(c => c.year === yr);
+                html += `<div class="year-divider"><span class="year-badge">${yr}</span></div>`;
+                html += group.map((c, idx) => buildCard(c, idx, boldDates)).join("");
+            });
+            container.innerHTML = html;
+        } else {
+            container.innerHTML = slice.map((c, idx) => buildCard(c, idx, boldDates)).join("");
+        }
+
+        loadWrap.style.display = visibleCount >= total ? "none" : "block";
+    }
+
+    function buildCard(c, idx, boldDates) {
+        const detailLines = c.outcomeDetail.split("\n\n").map(l => `<p>${boldDates(l.trim())}</p>`).join("");
+        const pills = c.notable.length ?
+            c.notable.map(n => `<span class="notable-pill">${n}</span>`).join("") :
+            `<span style="font-size:0.75rem;color:var(--text-muted);font-style:italic;">None recorded</span>`;
+        const srcChips = c.sources.length ?
+            c.sources.map(s => s.url ?
+                `<a class="source-chip" href="${s.url}" target="_blank" rel="noopener"><i class="fa-solid fa-arrow-up-right-from-square"></i>${s.label}</a>` :
+                `<span class="source-chip"><i class="fa-solid fa-file-lines"></i>${s.label}</span>`
+            ).join("") :
+            `<span style="font-size:0.76rem;color:var(--text-muted);font-style:italic;">Primary sources not yet publicly available</span>`;
+        const iClass = typeIcon[c.type] || "fa-file-lines";
+        const cIco = catIcon[c.category] || "fa-folder";
+        const cLbl = catLabel[c.category] || c.category;
+        return `
+  <div class="tl-item" style="animation-delay:${idx*0.04}s" id="item-${c.id}">
+    <div class="tl-dot-wrap"><div class="tl-dot"></div></div>
+    <div class="tl-card ${c.outcomeClass}" onclick="toggleCard('${c.id}')">
+      <div class="card-top">
+        <div class="card-top-left">
+          <div class="card-case-id">${c.caseId}</div>
+          <div class="card-title">${c.name}</div>
+          <div class="card-cat ${c.category}"><i class="fa-solid ${cIco}"></i> ${cLbl}</div>
+        </div>
+        <span class="status-badge ${c.outcomeClass}"><i class="fa-solid ${statusIcon[c.outcomeClass]||'fa-circle'}"></i>${c.outcome}</span>
+      </div>
+      <div class="card-body-pad">
+        <div class="card-meta">
+          <span class="meta-item"><i class="fa-regular fa-calendar"></i><strong>${c.dateDisplay}</strong></span>
+          <span class="meta-item"><i class="fa-regular fa-user"></i>${c.petitioner}</span>
+          <span class="meta-item"><span class="jurisdiction-tag"><i class="fa-solid ${iClass}"></i> ${c.type}</span></span>
+        </div>
+        <div class="narration">${c.nature}</div>
+      </div>
+      <div class="view-details-row">
+        <button class="view-details-btn" id="btn-${c.id}" onclick="event.stopPropagation();toggleCard('${c.id}')">
+          View details <i class="fa-solid fa-chevron-down"></i>
+        </button>
+      </div>
+      <div class="card-detail" id="detail-${c.id}">
+        <div class="detail-inner">
+          <div class="detail-section">
+            <div class="detail-label"><i class="fa-solid fa-timeline"></i>Chronological Outcome Detail</div>
+            <div class="detail-text">${detailLines}</div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label"><i class="fa-solid fa-lightbulb"></i>Why This Matters</div>
+            <div class="why-matters"><strong><i class="fa-solid fa-triangle-exclamation" style="margin-right:0.3rem;"></i>Institutional Significance</strong>${c.whyMatters}</div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label"><i class="fa-solid fa-file-shield"></i>Primary Sources / References</div>
+            <div class="sources-wrap">${srcChips}</div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label"><i class="fa-solid fa-star"></i>Notable Cases / Investigations within Period</div>
+            <div class="notable-pills">${pills}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+    }
+
+    function toggleCard(id) {
+        const det = document.getElementById(`detail-${id}`);
+        const btn = document.getElementById(`btn-${id}`);
+        const open = det.classList.contains("open");
+        det.classList.toggle("open", !open);
+        btn.classList.toggle("open", !open);
+        btn.innerHTML = open ?
+            `View details <i class="fa-solid fa-chevron-down"></i>` :
+            `Hide details <i class="fa-solid fa-chevron-up"></i>`;
+    }
+
+    function loadMore() {
+        visibleCount += 5;
+        renderTimeline();
+    }
+
+    /* ══ HEADER STATS ══ */
+    function renderHeaderStats() {
+        const total = cases.length;
+        const jud = cases.filter(c => c.category === "judicial").length;
+        const exec = cases.filter(c => c.category === "executive").length;
+        const other = cases.filter(c => ["parliament", "civil"].includes(c.category)).length;
+        document.getElementById("hdr-total").textContent = total;
+        document.getElementById("hstat-total").textContent = total;
+        document.getElementById("hstat-judicial").textContent = jud;
+        document.getElementById("hstat-executive").textContent = exec;
+        document.getElementById("hstat-other").textContent = other;
+
+        // Mini bar chart
+        const yearCounts = { 2023: 1, 2024: 4, 2025: 6, 2026: 4 };
+        const max = Math.max(...Object.values(yearCounts));
+        const bars = Object.entries(yearCounts).map(([yr, n], i) => `
+    <div class="mini-bar ${i===Object.keys(yearCounts).length-1?'active':''}"
+      style="height:${Math.max(15,Math.round((n/max)*38))}px;"
+      title="${yr}: ${n} action${n!==1?'s':''}"></div>
+  `).join("");
+        document.getElementById("miniBarChart").innerHTML = bars;
+    }
+
+    /* ══ ANALYTICS PANEL ══ */
+    function renderAnalytics() {
+        const total = cases.length;
+        const judicial = cases.filter(c => c.category === "judicial").length;
+        const executive = cases.filter(c => c.category === "executive").length;
+        const parliament = cases.filter(c => c.category === "parliament").length;
+        const civil = cases.filter(c => c.category === "civil").length;
+
+        // Donut chart
+        const segments = [
+            { label: "Judicial", count: judicial, color: "#1d6fa4" },
+            { label: "Executive", count: executive, color: "#b45309" },
+            { label: "Parliament", count: parliament, color: "#5b4fcf" },
+            { label: "Civil Soc.", count: civil, color: "#0d7a4e" }
+        ];
+        const r = 15.915,
+            cx = 18,
+            cy = 18,
+            radius = 15.915;
+        let offset = 0;
+        const svgSegments = segments.map(s => {
+            const pct = (s.count / total) * 100;
+            const stroke = `${pct} ${100-pct}`;
+            const el = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${s.color}" stroke-width="3.5" stroke-dasharray="${stroke}" stroke-dashoffset="${-offset}" stroke-linecap="butt"/>`;
+            offset += pct;
+            return el;
+        }).join("");
+        document.getElementById("donutSvg").innerHTML = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#eef1f5" stroke-width="3.5"/>${svgSegments}`;
+        document.getElementById("donutTotal").textContent = total;
+        document.getElementById("donutLegend").innerHTML = segments.map(s => `
+    <div class="donut-legend-item">
+      <span class="dot" style="background:${s.color}"></span>
+      <span>${s.label}</span>
+      <span class="pct">${Math.round((s.count/total)*100)}%</span>
+    </div>
+  `).join("");
+
+        // Status bars
+        const statusData = [
+            { label: "Ongoing", count: cases.filter(c => c.outcomeClass === "ongoing").length, color: "var(--s-ongoing)" },
+            { label: "Decided", count: cases.filter(c => c.outcomeClass === "dismissed").length, color: "#1d6fa4" },
+            { label: "Pending", count: cases.filter(c => c.outcomeClass === "unknown").length, color: "#f59e0b" },
+            { label: "Completed", count: cases.filter(c => ["struck", "withdrawn"].includes(c.outcomeClass)).length, color: "var(--gold-dark)" },
+            { label: "Dismissed", count: cases.filter(c => c.outcomeClass === "upheld").length, color: "#9ca3af" }
+        ];
+        document.getElementById("statusBars").innerHTML = statusData.map(s => `
+    <div class="status-bar-row">
+      <div class="sb-top"><span class="sb-label">${s.label}</span><span class="sb-count">${s.count}</span></div>
+      <div class="sb-track"><div class="sb-fill" style="width:${Math.round((s.count/total)*100)}%;background:${s.color}"></div></div>
+    </div>
+  `).join("");
+
+        // Over-time line chart
+        const yrData = [{ yr: "2023", n: 1 }, { yr: "2024", n: 4 }, { yr: "2025", n: 6 }, { yr: "2026", n: 4 }];
+        const maxN = 8;
+        const pts = yrData.map((d, i) => {
+            const x = 20 + i * (220 / 3);
+            const y = 70 - (d.n / maxN) * 60;
+            return { x, y, n: d.n };
+        });
+        const polyline = pts.map(p => `${p.x},${p.y}`).join(" ");
+        const area = `${pts[0].x},70 ${polyline} ${pts[pts.length-1].x},70`;
+        const circles = pts.map(p => `<circle cx="${p.x}" cy="${p.y}" r="4" fill="#c9a84c" stroke="white" stroke-width="1.5"/>
+    <text x="${p.x}" y="${p.y-8}" text-anchor="middle" font-size="9" fill="#3d4f63" font-family="DM Sans,sans-serif">${p.n}</text>`).join("");
+        document.getElementById("otSvg").innerHTML = `
+    <defs><linearGradient id="otGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c9a84c" stop-opacity="0.18"/><stop offset="1" stop-color="#c9a84c" stop-opacity="0"/></linearGradient></defs>
+    <polygon points="${area}" fill="url(#otGrad)"/>
+    <polyline points="${polyline}" fill="none" stroke="#c9a84c" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+    ${circles}
+  `;
+
+        // Top institutions
+        const instCounts = {
+            "High Court of Justice": cases.filter(c => c.type === "High Court").length,
+            "Office of the Special Prosecutor": cases.filter(c => c.petitioner.includes("Office")).length + 1,
+            "Attorney-General's Office": 2,
+            "Parliament of Ghana": cases.filter(c => c.type === "Parliamentary").length,
+            "Supreme Court of Ghana": cases.filter(c => c.type === "Supreme Court").length,
+            "Others": 1
+        };
+        document.getElementById("topInstitutions").innerHTML = Object.entries(instCounts)
+            .sort((a, b) => b[1] - a[1])
+            .map(([name, n]) => `
+      <div class="top-inst-row">
+        <span class="inst-name">${name}</span>
+        <span class="inst-count">${n}</span>
+      </div>
+    `).join("");
+    }
+
+    function setView(view, btn) {
+        document.querySelectorAll(".view-tab").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        if (view !== "timeline") {
+            document.getElementById("timelineList").innerHTML = `
+            <div class="context-panel">
+                <button class="context-toggle" id="ctxToggleBtn" onclick="toggleContext()">
+                  <span><i class="fa-solid fa-building-columns me-2"></i>Institutional Context — Understanding the OSP and Why These Actions Matter</span>
+                  <i class="fa-solid fa-chevron-down chevron"></i>
+                </button>
+                <div class="context-body" id="contextBody">
+                  <div class="context-body-inner">
+                    <div class="context-grid">
+                      <div class="context-card"><h6><i class="fa-solid fa-landmark"></i>What is the OSP?</h6><p>The Office of the Special Prosecutor was established under the Office of the Special Prosecutor Act, 2017 (Act 959) as an independent institution to investigate and prosecute corruption-related offences involving public officers and politically exposed persons, separate from the ordinary criminal justice chain.</p></div>
+                      <div class="context-card"><h6><i class="fa-solid fa-scale-balanced"></i>Prosecutorial Independence</h6><p>The OSP's independence means it can initiate and conduct prosecutions without requiring prior authorisation from the Attorney-General. This is the core constitutional question in several suits — whether Act 959's conferral of such powers is consistent with Articles 88(3) and 88(4) of the 1992 Constitution.</p></div>
+                      <div class="context-card"><h6><i class="fa-solid fa-user-tie"></i>OSP vs Attorney-General</h6><p>The Attorney-General is Ghana's principal public prosecutor under the Constitution. The OSP operates alongside — not under — the AG on corruption matters. Critics argue this creates a constitutional overlap; supporters argue it is a necessary structural safeguard against politically influenced prosecutorial decisions.</p></div>
+                      <div class="context-card"><h6><i class="fa-solid fa-circle-question"></i>Why These Actions Matter</h6><p>Each entry represents an action that, if successful, would have curtailed, suspended, or abolished the OSP's independent mandate. Understanding these patterns is important for assessing the institutional health of Ghana's anti-corruption architecture.</p></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+      `;
+            document.getElementById("loadMoreWrap").style.display = "none";
+        } else {
+            renderTimeline();
+        }
+    }
+
+    /* ══ INIT ══ */
+    buildSidebarFilters();
+    renderHeaderStats();
+    renderAnalytics();
+    applyFilters();
+    </script>
+</body>
+
+</html>
